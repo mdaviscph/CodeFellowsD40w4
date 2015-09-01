@@ -16,6 +16,9 @@
 		0098C4061B95341400FC6225 /* LocationRemindersTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0098C4051B95341400FC6225 /* LocationRemindersTests.m */; };
 		0098C4101B95547700FC6225 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0098C40F1B95547700FC6225 /* MapKit.framework */; };
 		0098C4131B95557900FC6225 /* LocationService.m in Sources */ = {isa = PBXBuildFile; fileRef = 0098C4121B95557900FC6225 /* LocationService.m */; };
+		0098C4161B9600A800FC6225 /* Stack.m in Sources */ = {isa = PBXBuildFile; fileRef = 0098C4151B9600A800FC6225 /* Stack.m */; };
+		0098C41A1B960A8500FC6225 /* CodingChallenges.m in Sources */ = {isa = PBXBuildFile; fileRef = 0098C4191B960A8500FC6225 /* CodingChallenges.m */; };
+		0098C41D1B9611D700FC6225 /* Queue.m in Sources */ = {isa = PBXBuildFile; fileRef = 0098C41C1B9611D700FC6225 /* Queue.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,6 +48,12 @@
 		0098C40F1B95547700FC6225 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		0098C4111B95557900FC6225 /* LocationService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationService.h; sourceTree = "<group>"; };
 		0098C4121B95557900FC6225 /* LocationService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationService.m; sourceTree = "<group>"; };
+		0098C4141B9600A800FC6225 /* Stack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Stack.h; sourceTree = "<group>"; };
+		0098C4151B9600A800FC6225 /* Stack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Stack.m; sourceTree = "<group>"; };
+		0098C4181B960A8500FC6225 /* CodingChallenges.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodingChallenges.h; sourceTree = "<group>"; };
+		0098C4191B960A8500FC6225 /* CodingChallenges.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodingChallenges.m; sourceTree = "<group>"; };
+		0098C41B1B9611D700FC6225 /* Queue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Queue.h; sourceTree = "<group>"; };
+		0098C41C1B9611D700FC6225 /* Queue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Queue.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -93,6 +102,7 @@
 				0098C3F11B95341400FC6225 /* ViewController.m */,
 				0098C4111B95557900FC6225 /* LocationService.h */,
 				0098C4121B95557900FC6225 /* LocationService.m */,
+				0098C4171B9600BC00FC6225 /* CodeChallenges */,
 				0098C3E91B95341400FC6225 /* Supporting Files */,
 			);
 			path = LocationReminders;
@@ -126,6 +136,19 @@
 				0098C4041B95341400FC6225 /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		0098C4171B9600BC00FC6225 /* CodeChallenges */ = {
+			isa = PBXGroup;
+			children = (
+				0098C4181B960A8500FC6225 /* CodingChallenges.h */,
+				0098C4191B960A8500FC6225 /* CodingChallenges.m */,
+				0098C4141B9600A800FC6225 /* Stack.h */,
+				0098C4151B9600A800FC6225 /* Stack.m */,
+				0098C41B1B9611D700FC6225 /* Queue.h */,
+				0098C41C1B9611D700FC6225 /* Queue.m */,
+			);
+			name = CodeChallenges;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -233,9 +256,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0098C41D1B9611D700FC6225 /* Queue.m in Sources */,
 				0098C3F21B95341400FC6225 /* ViewController.m in Sources */,
+				0098C41A1B960A8500FC6225 /* CodingChallenges.m in Sources */,
 				0098C3EF1B95341400FC6225 /* AppDelegate.m in Sources */,
 				0098C4131B95557900FC6225 /* LocationService.m in Sources */,
+				0098C4161B9600A800FC6225 /* Stack.m in Sources */,
 				0098C3EC1B95341400FC6225 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

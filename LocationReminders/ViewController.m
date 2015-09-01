@@ -9,7 +9,7 @@
 #import "ViewController.h"
 #import "LocationService.h"
 #import <MapKit/MapKit.h>
-  //@import MapKit;
+#import "CodingChallenges.h"
 
 @interface ViewController ()
 @property (weak, nonatomic) IBOutlet MKMapView *mapView;
@@ -29,6 +29,9 @@
 - (void)viewDidLoad {
   [super viewDidLoad];
   
+  CodingChallenges *test = [[CodingChallenges alloc] init];
+  [test monday];
+  
   // SR520, 40th St.: 47.645997, -122.134871
   // SR520, I-405: 47.632241, -122.187911
   // SR520, Evergreen Pt.: 47.637193, -122.238407
@@ -38,7 +41,6 @@
   
   MKCoordinateSpan span = MKCoordinateSpanMake(center1.latitude - center3.latitude, center1.longitude - center3.longitude);
   MKCoordinateRegion region = MKCoordinateRegionMake(center2, span);
-    //MKCoordinateRegion region = MKCoordinateRegionMakeWithDistance(center2, CLLocationDistance latitudinalMeters, <#CLLocationDistance longitudinalMeters#>)
   self.mapView.region = region;
 
   BOOL authorized = [self.locationService requestAuthorization];
@@ -53,3 +55,4 @@
 }
 
 @end
+
