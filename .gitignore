@@ -28,7 +28,7 @@ xcuserdata
 *.ipa
 mv
 Keys.swift
-Keys.h
+Keys.m
 .DS_Store
 
 # CocoaPods
