@@ -8,6 +8,7 @@
 
 #import "LocationService.h"
 
+
 @implementation LocationService
 
 - (CLLocationManager *)manager {
@@ -20,6 +21,7 @@
 - (instancetype) init {
   self = [super init];
   if (self) {
+      // these are used for standard location updates (startUpdatingLocation:)
     self.manager.desiredAccuracy = kCLLocationAccuracyBest;
     self.manager.distanceFilter = kCLDistanceFilterNone;
     self.manager.activityType = CLActivityTypeFitness;
@@ -44,10 +46,17 @@
   return authorized;
 }
 
-- (BOOL)isMonitoringAvailable {
+- (BOOL)isMonitoringAvailable: (LocationServiceMonitoring)ServiceType {
   BOOL available = NO;
-  
-  available = [CLLocationManager locationServicesEnabled];
+  switch (ServiceType) {
+    case ServicesEnabled:
+      available = [CLLocationManager locationServicesEnabled];
+      break;
+    case Region:
+      available = [CLLocationManager isMonitoringAvailableForClass:[CLBeaconRegion class]];
+    default:
+      break;
+  }
   return available;
 }
 @end

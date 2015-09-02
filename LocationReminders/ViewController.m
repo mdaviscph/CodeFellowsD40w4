@@ -11,7 +11,7 @@
 #import <MapKit/MapKit.h>
 #import "CodingChallenges.h"
 
-@interface ViewController ()
+@interface ViewController () <CLLocationManagerDelegate, MKMapViewDelegate>
 @property (weak, nonatomic) IBOutlet MKMapView *mapView;
 @property (strong, nonatomic) LocationService *locationService;
 
@@ -26,6 +26,7 @@
   return _locationService;
 }
 
+#pragma mark - Lifecycle Methods
 - (void)viewDidLoad {
   [super viewDidLoad];
   
@@ -43,16 +44,56 @@
   MKCoordinateRegion region = MKCoordinateRegionMake(center2, span);
   self.mapView.region = region;
 
+  self.locationService.manager.delegate = self;
   BOOL authorized = [self.locationService requestAuthorization];
+  if (authorized) {
+    
+  }
 }
 
 - (void)viewWillAppear:(BOOL)animated {
   [super viewWillAppear:animated];
   
-  BOOL available = [self.locationService isMonitoringAvailable];
-  
-  self.mapView.showsUserLocation = YES;
+  BOOL available = [self.locationService isMonitoringAvailable:ServicesEnabled];
+  if (available){
+    self.mapView.showsUserLocation = YES;
+  }
 }
+
+- (void)dealloc {
+    // we don't currently need this because the mapView handles location updates
+    // we will eventually stop region monitoring here if needed
+    //[self.locationService.manager stopUpdatingLocation];
+}
+
+
+#pragma mark - CLLocationManagerDelegate
+
+- (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
+  switch (status) {
+    case kCLAuthorizationStatusAuthorizedAlways:
+        // not currently asking for this so we can ignore this case
+      break;
+    case kCLAuthorizationStatusDenied:
+        //TODO: Alert popover
+      break;
+    case kCLAuthorizationStatusAuthorizedWhenInUse:
+        // we don't currently need this because the mapView handles location updates
+        // we will eventually start region monitoring here
+        //[self.locationService.manager startUpdatingLocation];
+      break;
+    case kCLAuthorizationStatusNotDetermined:
+        // should not be changing back to this so we can ignore
+      break;
+    case kCLAuthorizationStatusRestricted:
+        //TODO: Alert popover
+      break;
+    default:
+      break;
+  }
+}
+
+#pragma mark - MKMapViewDelegate
 
 @end
 

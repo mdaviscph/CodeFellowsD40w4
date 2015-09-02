@@ -9,11 +9,21 @@
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
 
+enum LocationServiceMonitoring {
+  ServicesEnabled, SignificantChange, Region, Heading, DeferredUpdates
+};
+typedef enum LocationServiceMonitoring LocationServiceMonitoring;
+
+enum LocationServiceRegionState {
+  TransitionInside, TransitionOutside, StartingInside, StartingOutside
+};
+typedef enum LocationServiceRegionState LocationServiceRegionState;
+
 @interface LocationService : NSObject
 
 @property (strong, nonatomic) CLLocationManager *manager;
 
 - (instancetype) init;
 - (BOOL)requestAuthorization;
-- (BOOL)isMonitoringAvailable;
+- (BOOL)isMonitoringAvailable: (LocationServiceMonitoring)ServiceType;
 @end
