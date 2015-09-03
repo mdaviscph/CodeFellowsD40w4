@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		009285E41B98BF0200917A3E /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 009285E31B98BF0200917A3E /* Constants.m */; };
 		0098C3EC1B95341400FC6225 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0098C3EB1B95341400FC6225 /* main.m */; };
 		0098C3EF1B95341400FC6225 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0098C3EE1B95341400FC6225 /* AppDelegate.m */; };
 		0098C3F21B95341400FC6225 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0098C3F11B95341400FC6225 /* ViewController.m */; };
@@ -51,6 +52,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		009285E21B98BF0200917A3E /* Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Constants.h; path = ../Constants.h; sourceTree = "<group>"; };
+		009285E31B98BF0200917A3E /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Constants.m; path = ../Constants.m; sourceTree = "<group>"; };
 		0098C3E61B95341400FC6225 /* LocationReminders.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LocationReminders.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0098C3EA1B95341400FC6225 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0098C3EB1B95341400FC6225 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -158,6 +161,8 @@
 				00CB0D941B980B2C002F751A /* Controller */,
 				0098C4111B95557900FC6225 /* LocationService.h */,
 				0098C4121B95557900FC6225 /* LocationService.m */,
+				009285E21B98BF0200917A3E /* Constants.h */,
+				009285E31B98BF0200917A3E /* Constants.m */,
 				0098C4171B9600BC00FC6225 /* CodeChallenges */,
 				0098C3E91B95341400FC6225 /* Supporting Files */,
 			);
@@ -355,6 +360,7 @@
 				0098C41A1B960A8500FC6225 /* CodingChallenges.m in Sources */,
 				0098C3EF1B95341400FC6225 /* AppDelegate.m in Sources */,
 				0098C4131B95557900FC6225 /* LocationService.m in Sources */,
+				009285E41B98BF0200917A3E /* Constants.m in Sources */,
 				00CB0D901B977B59002F751A /* Keys.m in Sources */,
 				00CB0D931B980AFC002F751A /* AddReminderViewController.m in Sources */,
 				0098C4161B9600A800FC6225 /* Stack.m in Sources */,

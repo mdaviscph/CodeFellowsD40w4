@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="1y0-Ph-shh">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
@@ -58,8 +59,43 @@
                     <view key="view" contentMode="scaleToFill" id="lPK-hK-Si1">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Address" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="e4Q-sj-tZ1">
+                                <rect key="frame" x="16" y="110" width="568" height="20"/>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Reminder title" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="0jD-MR-1G1">
+                                <rect key="frame" x="16" y="72" width="568" height="30"/>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences" enablesReturnKeyAutomatically="YES"/>
+                            </textField>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="City" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pmL-D3-qF6">
+                                <rect key="frame" x="16" y="138" width="568" height="20"/>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="pmL-D3-qF6" firstAttribute="leading" secondItem="lPK-hK-Si1" secondAttribute="leadingMargin" id="22S-yH-cSe"/>
+                            <constraint firstItem="e4Q-sj-tZ1" firstAttribute="top" secondItem="0jD-MR-1G1" secondAttribute="bottom" constant="8" symbolic="YES" id="3B0-Gn-8Uh"/>
+                            <constraint firstItem="0jD-MR-1G1" firstAttribute="top" secondItem="5Zw-3a-KX6" secondAttribute="bottom" constant="8" symbolic="YES" id="Kca-Oc-2jW"/>
+                            <constraint firstItem="pmL-D3-qF6" firstAttribute="top" secondItem="e4Q-sj-tZ1" secondAttribute="bottom" constant="8" symbolic="YES" id="OgC-1F-WjB"/>
+                            <constraint firstItem="e4Q-sj-tZ1" firstAttribute="trailing" secondItem="lPK-hK-Si1" secondAttribute="trailingMargin" id="aY6-i7-dal"/>
+                            <constraint firstItem="0jD-MR-1G1" firstAttribute="trailing" secondItem="lPK-hK-Si1" secondAttribute="trailingMargin" id="diX-eS-NhF"/>
+                            <constraint firstItem="0jD-MR-1G1" firstAttribute="leading" secondItem="lPK-hK-Si1" secondAttribute="leadingMargin" id="kRr-EU-5y1"/>
+                            <constraint firstItem="pmL-D3-qF6" firstAttribute="trailing" secondItem="lPK-hK-Si1" secondAttribute="trailingMargin" id="n5V-XQ-9fw"/>
+                            <constraint firstItem="e4Q-sj-tZ1" firstAttribute="leading" secondItem="lPK-hK-Si1" secondAttribute="leadingMargin" id="tI6-5h-dKH"/>
+                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="addressLabel" destination="e4Q-sj-tZ1" id="h1C-LK-v0Y"/>
+                        <outlet property="cityLabel" destination="pmL-D3-qF6" id="wDU-pW-pDg"/>
+                        <outlet property="titleTextField" destination="0jD-MR-1G1" id="ekT-VX-Gau"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="gib-sF-sNy" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

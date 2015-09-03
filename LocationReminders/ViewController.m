@@ -7,20 +7,30 @@
 //
 
 #import "ViewController.h"
+#import "AddReminderViewController.h"
+#import "Constants.h"
 #import "LocationService.h"
 #import <MapKit/MapKit.h>
 #import "CodingChallenges.h"
 
 @interface ViewController () <CLLocationManagerDelegate, MKMapViewDelegate>
+
 @property (weak, nonatomic) IBOutlet MKMapView *mapView;
 @property (strong, nonatomic) LocationService *locationService;
 @property (strong, nonatomic) IBOutlet UILongPressGestureRecognizer *longPressGesture;
+
+- (void) startObservingNotifications;
+- (void) stopObservingNotifications;
+- (void) reminderAdded: (NSNotification *)notification;
 
 @end
 
 @implementation ViewController
 
-- (IBAction)longPressGesture:(UILongPressGestureRecognizer *)sender {
+NSString *segueToAddReminder = @"ShowAddReminder";
+NSString *reusableAnnotationView = @"AnnotationView";
+
+- (IBAction) longPressGesture:(UILongPressGestureRecognizer *)sender {
   CGPoint point = [sender locationInView:self.mapView];
   CLLocationCoordinate2D coordinate = [self.mapView convertPoint:point toCoordinateFromView:self.mapView];
   NSLog(@"point: (%0.2f, %0.2f)", point.x, point.y);
@@ -40,7 +50,8 @@
 }
 
 #pragma mark - Lifecycle Methods
-- (void)viewDidLoad {
+
+- (void) viewDidLoad {
   [super viewDidLoad];
   
   CodingChallenges *test = [[CodingChallenges alloc] init];
@@ -62,9 +73,10 @@
   if (authorized) {
     
   }
+  [self startObservingNotifications];
 }
 
-- (void)viewWillAppear:(BOOL)animated {
+- (void) viewWillAppear:(BOOL)animated {
   [super viewWillAppear:animated];
   
   BOOL available = [self.locationService isMonitoringAvailable:ServicesEnabled];
@@ -73,14 +85,40 @@
   self.mapView.delegate = available ? self : nil;
 }
 
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-  
+#pragma mark - Helper Methods
+
+- (void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+  if ([segue.identifier isEqualToString:segueToAddReminder]) {
+    AddReminderViewController *detailVC = segue.destinationViewController;
+    MKPointAnnotation *annotation = [[self.mapView selectedAnnotations] firstObject];
+    if (annotation) {
+      detailVC.annotation = annotation;
+    }
+  }
 }
 
-- (void)dealloc {
+- (void) startObservingNotifications {
+  [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reminderAdded:) name:ConstNotificationOfReminderAdded object:nil];
+}
+- (void) stopObservingNotifications {
+  [[NSNotificationCenter defaultCenter] removeObserver:self name:ConstNotificationOfReminderAdded object:nil];
+}
+
+- (void) reminderAdded: (NSNotification *)notification {
+  NSDictionary *userInfo = notification.userInfo;
+  NSString *title = [userInfo objectForKey:ConstReminderUserInfoTitleKey];
+  NSString *place = [userInfo objectForKey:ConstReminderUserInfoPlaceKey];
+  NSString *city = [userInfo objectForKey:ConstReminderUserInfoCityKey];
+  NSNumber *latitude = [userInfo objectForKey:ConstReminderUserInfoLatitudeKey];
+  NSNumber *longitude = [userInfo objectForKey:ConstReminderUserInfoLongitudeKey];
+  NSLog(@"reminder: %@ place: %@ city: %@ latitude: %.3f longitude: %.3f", title, place, city, latitude.doubleValue, longitude.doubleValue);
+}
+   
+- (void) dealloc {
     // we don't currently need this because the mapView handles location updates
     // we will eventually stop region monitoring here if needed
     //[self.locationService.manager stopUpdatingLocation];
+  [self stopObservingNotifications];
 }
 
 
@@ -116,11 +154,11 @@
   if ([annotation isKindOfClass:[MKUserLocation class]]) {
     return nil;
   }
-  MKPinAnnotationView *pinView = (MKPinAnnotationView *)[mapView dequeueReusableAnnotationViewWithIdentifier:@"AnnotationView"];
+  MKPinAnnotationView *pinView = (MKPinAnnotationView *)[mapView dequeueReusableAnnotationViewWithIdentifier:reusableAnnotationView];
   if (pinView) {
     pinView.annotation = annotation;
   } else {
-    pinView = [[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:@"AnnotationView"];
+    pinView = [[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:reusableAnnotationView];
   }
   pinView.pinColor = MKPinAnnotationColorGreen;
   pinView.canShowCallout = YES;
@@ -142,7 +180,7 @@
   if ([pointAnnotation.title isEqualToString:@"test"]) {
     NSLog(@"test annotation view selected with disclosure button");
   }
-  [self performSegueWithIdentifier:@"ShowAddReminder" sender:self];
+  [self performSegueWithIdentifier:segueToAddReminder sender:self];
 }
 
 - (void)mapView:(MKMapView *)mapView didUpdateUserLocation:(MKUserLocation *)userLocation {
