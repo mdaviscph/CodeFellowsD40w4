@@ -14,6 +14,6 @@
 -(NSObject *)pop;
 -(NSObject *)peek;  // should we protect against modification?
 -(void)push:(NSObject *)item;
--(NSString *)stringify;
+-(NSString *)description;
 
 @end

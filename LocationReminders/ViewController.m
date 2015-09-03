@@ -14,10 +14,23 @@
 @interface ViewController () <CLLocationManagerDelegate, MKMapViewDelegate>
 @property (weak, nonatomic) IBOutlet MKMapView *mapView;
 @property (strong, nonatomic) LocationService *locationService;
+@property (strong, nonatomic) IBOutlet UILongPressGestureRecognizer *longPressGesture;
 
 @end
 
 @implementation ViewController
+
+- (IBAction)longPressGesture:(UILongPressGestureRecognizer *)sender {
+  CGPoint point = [sender locationInView:self.mapView];
+  CLLocationCoordinate2D coordinate = [self.mapView convertPoint:point toCoordinateFromView:self.mapView];
+  NSLog(@"point: (%0.2f, %0.2f)", point.x, point.y);
+  NSLog(@"coordinate: (%0.4f, %0.4f)", coordinate.latitude, coordinate.longitude);
+  
+  MKPointAnnotation *annotation = [[MKPointAnnotation alloc] init];
+  annotation.title = @"test";
+  annotation.coordinate = coordinate;
+  [self.mapView addAnnotation:annotation];
+}
 
 - (LocationService *)locationService {
   if (!_locationService) {
@@ -55,9 +68,13 @@
   [super viewWillAppear:animated];
   
   BOOL available = [self.locationService isMonitoringAvailable:ServicesEnabled];
-  if (available){
-    self.mapView.showsUserLocation = YES;
-  }
+
+  self.mapView.showsUserLocation = available ? YES : NO;
+  self.mapView.delegate = available ? self : nil;
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+  
 }
 
 - (void)dealloc {
@@ -94,6 +111,43 @@
 }
 
 #pragma mark - MKMapViewDelegate
+
+- (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id<MKAnnotation>)annotation {
+  if ([annotation isKindOfClass:[MKUserLocation class]]) {
+    return nil;
+  }
+  MKPinAnnotationView *pinView = (MKPinAnnotationView *)[mapView dequeueReusableAnnotationViewWithIdentifier:@"AnnotationView"];
+  if (pinView) {
+    pinView.annotation = annotation;
+  } else {
+    pinView = [[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:@"AnnotationView"];
+  }
+  pinView.pinColor = MKPinAnnotationColorGreen;
+  pinView.canShowCallout = YES;
+  
+  UIButton *rightButton = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
+  pinView.rightCalloutAccessoryView = rightButton;
+  return pinView;
+}
+
+- (void)mapView:(MKMapView *)mapView didSelectAnnotationView:(MKAnnotationView *)view {
+  MKPointAnnotation *pointAnnotation = (MKPointAnnotation *)view.annotation;
+  if ([pointAnnotation.title isEqualToString:@"test"]) {
+    NSLog(@"test annotation view selected");
+  }
+}
+
+- (void)mapView:(MKMapView *)mapView annotationView:(MKAnnotationView *)view calloutAccessoryControlTapped:(UIControl *)control {
+  MKPointAnnotation *pointAnnotation = (MKPointAnnotation *)view.annotation;
+  if ([pointAnnotation.title isEqualToString:@"test"]) {
+    NSLog(@"test annotation view selected with disclosure button");
+  }
+  [self performSegueWithIdentifier:@"ShowAddReminder" sender:self];
+}
+
+- (void)mapView:(MKMapView *)mapView didUpdateUserLocation:(MKUserLocation *)userLocation {
+  
+}
 
 @end
 
