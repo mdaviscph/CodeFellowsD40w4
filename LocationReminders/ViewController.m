@@ -8,20 +8,26 @@
 
 #import "ViewController.h"
 #import "AddReminderViewController.h"
+#import "Reminder.h"
 #import "Constants.h"
 #import "LocationService.h"
 #import <MapKit/MapKit.h>
+#import <Parse/Parse.h>
+#import <ParseUI/ParseUI.h>
 #import "CodingChallenges.h"
 
-@interface ViewController () <CLLocationManagerDelegate, MKMapViewDelegate>
+@interface ViewController () <CLLocationManagerDelegate, MKMapViewDelegate, PFLogInViewControllerDelegate, PFSignUpViewControllerDelegate>
 
 @property (weak, nonatomic) IBOutlet MKMapView *mapView;
 @property (strong, nonatomic) LocationService *locationService;
 @property (strong, nonatomic) IBOutlet UILongPressGestureRecognizer *longPressGesture;
+@property (strong, nonatomic) NSMutableArray* savedReminders;
 
 - (void) startObservingNotifications;
 - (void) stopObservingNotifications;
 - (void) reminderAdded: (NSNotification *)notification;
+- (void) saveReminder: (Reminder *)reminder;
+- (void) queryRemindersFor: (PFUser *)user;
 
 @end
 
@@ -47,6 +53,12 @@ NSString *reusableAnnotationView = @"AnnotationView";
     _locationService = [[LocationService alloc] init];
   }
   return _locationService;
+}
+- (NSMutableArray *)savedReminders {
+  if (!_savedReminders) {
+    _savedReminders = [[NSMutableArray alloc] init];
+  }
+  return _savedReminders;
 }
 
 #pragma mark - Lifecycle Methods
@@ -83,6 +95,24 @@ NSString *reusableAnnotationView = @"AnnotationView";
 
   self.mapView.showsUserLocation = available ? YES : NO;
   self.mapView.delegate = available ? self : nil;
+  
+  if (![PFUser currentUser]) {
+    PFLogInViewController *loginViewController = [[PFLogInViewController alloc] init];
+    [loginViewController setDelegate:self];
+    [loginViewController setEmailAsUsername:YES];
+    [loginViewController setTitle:@"Location Reminders"];
+
+    PFSignUpViewController *signupViewController = [[PFSignUpViewController alloc] init];
+    [signupViewController setDelegate:self];
+    [signupViewController setEmailAsUsername:YES];
+    [signupViewController setTitle:@"Location Reminders"];
+
+    [loginViewController setSignUpController:signupViewController];
+    [self presentViewController:loginViewController animated:YES completion:NULL];
+  }
+  if ([PFUser currentUser]) {
+    [self queryRemindersFor:[PFUser currentUser]];
+  }
 }
 
 #pragma mark - Helper Methods
@@ -112,8 +142,34 @@ NSString *reusableAnnotationView = @"AnnotationView";
   NSNumber *latitude = [userInfo objectForKey:ConstReminderUserInfoLatitudeKey];
   NSNumber *longitude = [userInfo objectForKey:ConstReminderUserInfoLongitudeKey];
   NSLog(@"reminder: %@ place: %@ city: %@ latitude: %.3f longitude: %.3f", title, place, city, latitude.doubleValue, longitude.doubleValue);
+  
+  if (title && latitude && longitude) {
+    Reminder *reminder = [[Reminder alloc] init];
+    reminder.title = title;
+    reminder.center = [PFGeoPoint geoPointWithLatitude:latitude.doubleValue longitude:longitude.doubleValue];
+    reminder.placeName = place;
+    reminder.placeCity = city;
+    reminder.user = [PFUser currentUser];
+    [self saveReminder:reminder];
+  }
 }
-   
+
+- (void) saveReminder:(Reminder *)reminder {
+  [reminder saveInBackground];
+}
+
+- (void) queryRemindersFor:(PFUser *)user {
+  PFQuery *remindersQuery = [Reminder query];
+  [remindersQuery whereKey:@"user" equalTo:[PFUser currentUser]];
+  [remindersQuery findObjectsInBackgroundWithBlock: ^(NSArray *objects, NSError *error) {
+    for (id object in objects) {
+      Reminder *reminder = (Reminder *)object;
+      [self.savedReminders addObject:reminder];
+    }
+  }];
+}
+
+
 - (void) dealloc {
     // we don't currently need this because the mapView handles location updates
     // we will eventually stop region monitoring here if needed
@@ -185,6 +241,16 @@ NSString *reusableAnnotationView = @"AnnotationView";
 
 - (void)mapView:(MKMapView *)mapView didUpdateUserLocation:(MKUserLocation *)userLocation {
   
+}
+
+#pragma mark - PFSignUpViewControllerDelegate
+- (void)signUpViewController:(PFSignUpViewController * __nonnull)signUpController didSignUpUser:(PFUser * __nonnull)user {
+  [signUpController dismissViewControllerAnimated:YES completion:nil];
+}
+
+#pragma mark - PFLogInViewControllerDelegate
+- (void)logInViewController:(PFLogInViewController * __nonnull)logInController didLogInUser:(PFUser * __nonnull)user {
+  [logInController dismissViewControllerAnimated:YES completion:nil];
 }
 
 @end
