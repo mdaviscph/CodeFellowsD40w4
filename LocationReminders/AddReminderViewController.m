@@ -29,8 +29,10 @@
 @implementation AddReminderViewController
 #pragma mark -
 
-#pragma mark - Public Properties
+#pragma mark - Public Property Getters, Setters
 
+// we don't want to update annotation passed to us so we can check title to remove or replace new annotation
+// TODO: figure out how to have a "copy" property when you replace the setter 
 @synthesize annotation = _annotation;
 - (MKPointAnnotation *) annotation {
   return _annotation;
@@ -41,6 +43,9 @@
     self.titleTextField.text = annotation.title;
   }
 }
+
+#pragma mark - Private Property Getters, Setters
+
 @synthesize placemark = _placemark;
 - (MKPlacemark *) placemark {
   return _placemark;
@@ -82,33 +87,30 @@
 
 - (void) donePressed {
   
-  if (self.titleTextField.text) {
-    self.annotation.title = self.titleTextField.text;
-  }
   NSMutableArray *values = [[NSMutableArray alloc] init];
   NSMutableArray *keys = [[NSMutableArray alloc] init];
-  if (self.annotation.title) {
-    [values addObject:self.annotation.title];
-    [keys addObject:ConstReminderUserInfoTitleKey];
+  if (self.titleTextField.text) {
+    [values addObject: self.titleTextField.text];
+    [keys addObject: ConstReminderUserInfoTitleKey];
   }
   if (self.placemark.name) {
-    [values addObject:self.placemark.name];
-    [keys addObject:ConstReminderUserInfoPlaceKey];
+    [values addObject: self.placemark.name];
+    [keys addObject: ConstReminderUserInfoPlaceKey];
   }
   if (self.city) {
-    [values addObject:self.city];
-    [keys addObject:ConstReminderUserInfoCityKey];
+    [values addObject: self.city];
+    [keys addObject: ConstReminderUserInfoCityKey];
   }
   NSNumber* latitude = [[NSNumber alloc] initWithDouble:self.annotation.coordinate.latitude];
   NSNumber* longitude = [[NSNumber alloc] initWithDouble:self.annotation.coordinate.longitude];
 
-  [values addObject:latitude];
-  [keys addObject:ConstReminderUserInfoLatitudeKey];
-  [values addObject:longitude];
-  [keys addObject:ConstReminderUserInfoLongitudeKey];
+  [values addObject: latitude];
+  [keys addObject: ConstReminderUserInfoLatitudeKey];
+  [values addObject: longitude];
+  [keys addObject: ConstReminderUserInfoLongitudeKey];
   
-  NSDictionary *userInfo = [[NSDictionary alloc] initWithObjects:values forKeys:keys];
-  [[NSNotificationCenter defaultCenter] postNotificationName:ConstNotificationOfReminderAdded object:self userInfo:userInfo];
+  NSDictionary *userInfo = [[NSDictionary alloc] initWithObjects: values forKeys: keys];
+  [[NSNotificationCenter defaultCenter] postNotificationName: ConstNotificationOfReminderAdded object: self userInfo: userInfo];
   [self.navigationController popViewControllerAnimated:YES];
   return;
 }
@@ -118,3 +120,5 @@
   return;
 }
 @end
+
+  // TODO: UITextField delegate or other method so we are done when hitting return

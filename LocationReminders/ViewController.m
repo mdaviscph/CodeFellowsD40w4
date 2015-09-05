@@ -59,7 +59,7 @@ NSString *const initialNavigationItemTitle = @"Home";
   [self.mapView addAnnotation: [self annotationPoint: coordinate withTitle: newAnnotationTitle withSubtitle: nil]];
 }
 
-#pragma mark - Private Properties
+#pragma mark - Private Property Getters, Setters
 
 - (LocationService *)locationService {
   if (!_locationService) {
@@ -125,6 +125,7 @@ NSString *const initialNavigationItemTitle = @"Home";
   self.mapView.showsUserLocation = available ? YES : NO;
   self.mapView.delegate = available ? self : nil;
   
+  // if returning from cancelled AddReminder VC remove one (or more if duplicates) related annotations
   for (MKPointAnnotation *annotation in [[self mapView] annotations]) {
     if ([annotation.title isEqualToString: newAnnotationTitle]) {
       [[self mapView] removeAnnotation: annotation];
@@ -195,6 +196,16 @@ NSString *const initialNavigationItemTitle = @"Home";
   return annotation;
 }
 
+- (void) addMapOverlaysFor: (NSMutableArray *)reminders {
+  NSMutableArray *annotations = [NSMutableArray array];
+  for (Reminder *reminder in reminders) {
+    CLLocationCoordinate2D coordinate = CLLocationCoordinate2DMake(reminder.center.latitude, reminder.center.longitude);
+    [annotations addObject: [self annotationPoint: coordinate withTitle: reminder.title withSubtitle: reminder.placeName]];
+  }
+    //[[self mapView] addAnnotations: annotations];
+  [[self mapView] showAnnotations: annotations animated: YES];
+}
+
 - (void) loginUser {
   PFLogInViewController *loginViewController = [[PFLogInViewController alloc] init];
   [loginViewController setDelegate:self];
@@ -235,11 +246,19 @@ NSString *const initialNavigationItemTitle = @"Home";
     reminder.placeCity = city;
     [self saveReminder: reminder];    // save new reminder or resave existing one, possibly with new title
     
+    // change the Add a Reminder annotation to look the same as an annotation for a saved reminder
+    // remove any extra annotations due to multiple long presses
+    // force change in pin color by causing mapView:viewForAnnimation: to fire by removing and adding annotation
+    BOOL addedOnce = NO;
     for (MKPointAnnotation *annotation in [[self mapView] annotations]) {
       if ([annotation.title isEqualToString: newAnnotationTitle]) {
-        [annotation setTitle: reminder.title];
-        [annotation setSubtitle: reminder.placeName];
-        break;
+        [[self mapView] removeAnnotation: annotation];
+        if (!addedOnce) {
+          addedOnce = YES;
+          MKPointAnnotation* newAnnotation = [self annotationPoint: annotation.coordinate withTitle: reminder.title withSubtitle: reminder.placeName];
+          [[self mapView] addAnnotation: newAnnotation];
+          [[self mapView] selectAnnotation: newAnnotation animated: YES];
+        }
       }
     }
   }

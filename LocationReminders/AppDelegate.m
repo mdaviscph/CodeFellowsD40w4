@@ -21,7 +21,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
   
   [Reminder registerSubclass];
-  [Parse setApplicationId:ParseApplicationId clientKey:ParseClientId];
+  [Parse setApplicationId: (NSString *)ParseApplicationId clientKey: (NSString *)ParseClientId];
   return YES;
 }
 
