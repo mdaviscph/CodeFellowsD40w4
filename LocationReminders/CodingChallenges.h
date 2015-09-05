@@ -10,6 +10,9 @@
 
 @interface CodingChallenges : NSObject
 
--(void)monday;
+-(void) monday;
+-(void) tuesday;
+
+-(BOOL) isAnagramOf:(NSString *)string1 string:(NSString *)string2;
 
 @end

@@ -47,4 +47,51 @@
   }
 }
 
+-(BOOL) isAnagramOf:(NSString *)string1 string:(NSString *)string2 {
+  NSMutableDictionary *countCharacters = [[NSMutableDictionary alloc] init];
+  for (int i = 0; i < string1.length; i++) {
+    unichar character = [string1 characterAtIndex:i];
+    NSNumber *count = [countCharacters objectForKey:@(character)];
+    if (!count) {
+      [countCharacters setObject:@1 forKey:@(character)];
+    } else {
+      NSNumber *count = @([[countCharacters objectForKey:@(character)] intValue] + 1);
+      [countCharacters setObject:count forKey:@(character)];
+    }
+  }
+  for (int i = 0; i < string2.length; i++) {
+    unichar character = [string2 characterAtIndex:i];
+    NSNumber *count = [countCharacters objectForKey:@(character)];
+    if (!count) {
+      return NO;
+    } else {
+      NSNumber *count = @([[countCharacters objectForKey:@(character)] intValue] - 1);
+      if ([count isEqualToNumber:@-1]) {
+        return NO;
+      } else if ([count isEqualToNumber:@0]) {
+        [countCharacters removeObjectForKey:@(character)];
+      } else {
+        [countCharacters setObject:count forKey:@(character)];
+      }
+    }
+  }
+  if (countCharacters.count == 0) {
+    return YES;
+  }
+  return NO;
+}
+
+-(void) tuesday {
+  NSString *string1 = @"abcdefgh";
+  NSString *string2 = @"badcfehg";
+  NSString *string3 = @"aabbccddeeffgghh";
+  NSString *string4 = @"😸😡😀";
+  
+  BOOL anagramA = [self isAnagramOf:string1 string:string2];
+  NSLog(@"string1: %@ string2: %@ is anagram: %@", string1, string2, anagramA ? @"YES" : @"NO");
+  BOOL anagramB = [self isAnagramOf:string1 string:string3];
+  NSLog(@"string1: %@ string3: %@ is anagram: %@", string1, string3, anagramB ? @"YES" : @"NO");
+  BOOL anagramC = [self isAnagramOf:string4 string:string4];
+  NSLog(@"string4: %@ to itself is anagram: %@", string4, anagramC ? @"YES" : @"NO");
+}
 @end

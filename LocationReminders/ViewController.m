@@ -68,6 +68,7 @@ NSString *reusableAnnotationView = @"AnnotationView";
   
   CodingChallenges *test = [[CodingChallenges alloc] init];
   [test monday];
+  [test tuesday];
   
   // SR520, 40th St.: 47.645997, -122.134871
   // SR520, I-405: 47.632241, -122.187911
