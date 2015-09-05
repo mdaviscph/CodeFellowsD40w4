@@ -15,3 +15,5 @@ NSString *const ConstReminderUserInfoPlaceKey = @"placeName";
 NSString *const ConstReminderUserInfoCityKey = @"placeCity";
 NSString *const ConstReminderUserInfoLatitudeKey = @"placeLatitude";
 NSString *const ConstReminderUserInfoLongitudeKey = @"placeLongitude";
+
+double const ConstReminderRadiusMeters = 100;

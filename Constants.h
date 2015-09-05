@@ -16,3 +16,4 @@ extern NSString *const ConstReminderUserInfoCityKey;
 extern NSString *const ConstReminderUserInfoLatitudeKey;
 extern NSString *const ConstReminderUserInfoLongitudeKey;
 
+extern double const ConstReminderRadiusMeters;

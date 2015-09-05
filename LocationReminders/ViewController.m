@@ -34,6 +34,7 @@
 - (void) queryRemindersFor: (PFUser *)user;
 - (void) addMapAnnotationsFor: (NSMutableArray *)reminders;
 - (MKPointAnnotation *) annotationPoint: (CLLocationCoordinate2D)coordinate withTitle: (NSString *)title withSubtitle: (NSString *)subtitle;
+- (void) addMapOverlaysFor: (NSMutableArray *)reminders;
 
 @end
 
@@ -166,6 +167,7 @@ NSString *const initialNavigationItemTitle = @"Home";
     self.navigationItem.rightBarButtonItem.title = loginButtonTitle;
   }
   [self addMapAnnotationsFor: self.savedReminders];
+  [self addMapOverlaysFor: self.savedReminders];
 }
 
 - (void) updateMapAnnotations {
@@ -200,7 +202,8 @@ NSString *const initialNavigationItemTitle = @"Home";
   NSMutableArray *annotations = [NSMutableArray array];
   for (Reminder *reminder in reminders) {
     CLLocationCoordinate2D coordinate = CLLocationCoordinate2DMake(reminder.center.latitude, reminder.center.longitude);
-    [annotations addObject: [self annotationPoint: coordinate withTitle: reminder.title withSubtitle: reminder.placeName]];
+    MKCircle *overlay = [MKCircle circleWithCenterCoordinate: coordinate radius: ConstReminderRadiusMeters];
+    [[self mapView] addOverlay: overlay];
   }
     //[[self mapView] addAnnotations: annotations];
   [[self mapView] showAnnotations: annotations animated: YES];
@@ -362,6 +365,16 @@ NSString *const initialNavigationItemTitle = @"Home";
     NSLog(@"new annotation view selected with disclosure button");
   }
   [self performSegueWithIdentifier:segueToAddReminder sender: self];
+}
+
+- (MKOverlayRenderer *)mapView:(MKMapView *)mapView rendererForOverlay:(id<MKOverlay>)overlay {
+  MKCircleRenderer *renderer = [[MKCircleRenderer alloc] initWithOverlay: overlay];
+  
+  renderer.lineWidth = 0.8;
+  renderer.strokeColor = [UIColor darkGrayColor];
+  renderer.fillColor = [UIColor lightGrayColor];
+  renderer.alpha = 0.4;
+  return renderer;
 }
 
 - (void)mapView:(MKMapView *)mapView didUpdateUserLocation: (MKUserLocation *)userLocation {
