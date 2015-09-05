@@ -10,7 +10,9 @@
 #import "Constants.h"
 #import <CoreLocation/CoreLocation.h>
 
+#pragma mark -
 @interface AddReminderViewController ()
+#pragma mark -
 
 @property (weak, nonatomic) IBOutlet UITextField *titleTextField;
 @property (weak, nonatomic) IBOutlet UILabel *addressLabel;
@@ -23,7 +25,11 @@
 
 @end
 
+#pragma mark -
 @implementation AddReminderViewController
+#pragma mark -
+
+#pragma mark - Public Properties
 
 @synthesize annotation = _annotation;
 - (MKPointAnnotation *) annotation {
@@ -75,6 +81,7 @@
 #pragma mark - Button Selector Methods
 
 - (void) donePressed {
+  
   if (self.titleTextField.text) {
     self.annotation.title = self.titleTextField.text;
   }

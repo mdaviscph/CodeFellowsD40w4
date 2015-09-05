@@ -10,8 +10,16 @@
 #import "Stack.h"
 #import "Queue.h"
 
+@interface CodingChallenges()
+
+-(BOOL) isAnagramOf:(NSString *)string1 string:(NSString *)string2;
+-(unsigned long) countOfDigits:(NSString *)string;
+
+@end
+
 @implementation CodingChallenges
 
+  // CODE CHALLENGE: Implement Stack and Queue.
 -(void)monday {
   
   {
@@ -81,6 +89,7 @@
   return NO;
 }
 
+  // CODE CHALLENGE: Write a method that detects if two strings are anagrams
 -(void) tuesday {
   NSString *string1 = @"abcdefgh";
   NSString *string2 = @"badcfehg";
@@ -93,5 +102,28 @@
   NSLog(@"string1: %@ string3: %@ is anagram: %@", string1, string3, anagramB ? @"YES" : @"NO");
   BOOL anagramC = [self isAnagramOf:string4 string:string4];
   NSLog(@"string4: %@ to itself is anagram: %@", string4, anagramC ? @"YES" : @"NO");
+}
+
+-(unsigned long) countOfDigits:(NSString *)string {
+  
+  NSArray* nonDigits = [string componentsSeparatedByCharactersInSet:[NSCharacterSet decimalDigitCharacterSet]];
+  NSString* noDigits = [nonDigits componentsJoinedByString:@""];
+  return string.length - noDigits.length;
+}
+
+  // CODE CHALLENGE: Given a string, return the sum of the digits 0-9 that appear in the string,
+  // ignoring all other characters. Return 0 if there are no digits in the string.
+-(void) wednesday {
+  NSString *string1 = @"abc0def8ghi22jkl3m4n50";
+  NSLog(@"string: %@ count of digits: %lu", string1, [self countOfDigits:string1]);
+  NSString *string2 = @"12345";
+  NSLog(@"string: %@ count of digits: %lu", string2, [self countOfDigits:string2]);
+  NSString *string3 = @"abcde";
+  NSLog(@"string: %@ count of digits: %lu", string3, [self countOfDigits:string3]);
+}
+
+  // CODE CHALLENGE: Implement a linked list.
+-(void) thursday {
+  
 }
 @end

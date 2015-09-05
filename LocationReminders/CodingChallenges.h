@@ -12,7 +12,7 @@
 
 -(void) monday;
 -(void) tuesday;
-
--(BOOL) isAnagramOf:(NSString *)string1 string:(NSString *)string2;
+-(void) wednesday;
+-(void) thursday;
 
 @end
