@@ -8,7 +8,6 @@
 
 #import "LocationService.h"
 
-
 @implementation LocationService
 
 - (CLLocationManager *)manager {

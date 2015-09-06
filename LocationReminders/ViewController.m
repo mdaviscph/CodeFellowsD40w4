@@ -25,18 +25,6 @@
 @property (strong, nonatomic) NSMutableArray *savedReminders;
 @property (strong, nonatomic) CLLocation* userLocation;
 
-- (void) startObservingNotifications;
-- (void) stopObservingNotifications;
-- (void) updateUI;
-- (void) loginUser;
-- (void) loginOutPressed;
-- (void) reminderAdded: (NSNotification *)notification;
-- (void) saveReminder: (Reminder *)reminder;
-- (void) queryRemindersFor: (PFUser *)user;
-- (void) addMapAnnotationsFor: (NSMutableArray *)reminders;
-- (MKPointAnnotation *) annotationPoint: (CLLocationCoordinate2D)coordinate withTitle: (NSString *)title withSubtitle: (NSString *)subtitle;
-- (void) addMapOverlaysFor: (NSMutableArray *)reminders;
-
 @end
 
 #pragma mark -
@@ -104,17 +92,6 @@ UIColor *reminderDefaultOverlayStrokeColor;
   reminderDefaultOverlayColor = [UIColor lightGrayColor];
   reminderDefaultOverlayStrokeColor = [UIColor darkGrayColor];
   
-  // SR520, 40th St.: 47.645997, -122.134871
-  // SR520, I-405: 47.632241, -122.187911
-  // SR520, Evergreen Pt.: 47.637193, -122.238407
-//  CLLocationCoordinate2D center1 = CLLocationCoordinate2DMake(47.645997, -122.134871);
-//  CLLocationCoordinate2D center2 = CLLocationCoordinate2DMake(47.632241, -122.187911);
-//  CLLocationCoordinate2D center3 = CLLocationCoordinate2DMake(47.637193, -122.238407);
-//  
-//  MKCoordinateSpan span = MKCoordinateSpanMake(center1.latitude - center3.latitude, center1.longitude - center3.longitude);
-//  MKCoordinateRegion region = MKCoordinateRegionMake(center2, span);
-//  self.mapView.region = region;
-
   self.locationService.manager.delegate = self;
   BOOL authorized = [self.locationService requestAuthorization];
   if (authorized) {
@@ -125,8 +102,9 @@ UIColor *reminderDefaultOverlayStrokeColor;
   
   if (![PFUser currentUser]) {
     [self loginUser];
+  } else {
+    [self updateMapBasedOnLogin];
   }
-  [self updateMapAnnotations];
 
   [self startObservingNotifications];
 }
@@ -165,30 +143,36 @@ UIColor *reminderDefaultOverlayStrokeColor;
     [self loginUser];
   } else {
     [PFUser logOut];
+    [self updateMapBasedOnLogin];
   }
-  [self updateMapAnnotations];
 }
 
 #pragma mark - Helper Methods
 
 - (void) updateUI {
   if ([PFUser currentUser]) {
+    NSString *oldTitle = self.navigationItem.rightBarButtonItem.title;
     self.navigationItem.rightBarButtonItem.title = ConstLogoutButtonTitle;
+    NSLog(@"title: %@ -> %@", oldTitle, ConstLogoutButtonTitle);
   }
   else {
+    NSString *oldTitle = self.navigationItem.rightBarButtonItem.title;
     self.navigationItem.rightBarButtonItem.title = ConstLoginButtonTitle;
+    NSLog(@"title: %@ -> %@", oldTitle, ConstLoginButtonTitle);
   }
   [self addMapAnnotationsFor: self.savedReminders];
   [self addMapOverlaysFor: self.savedReminders];
 }
 
-- (void) updateMapAnnotations {
+- (void) updateMapBasedOnLogin {
   if ([PFUser currentUser]) {
     [self queryRemindersFor: [PFUser currentUser]];
   }
   else {
     [self.mapView removeAnnotations: self.mapView.annotations];
+    [self.mapView removeOverlays: self.mapView.overlays];
     [self.savedReminders removeAllObjects];
+    [self updateUI];
   }
 }
 
@@ -231,7 +215,6 @@ UIColor *reminderDefaultOverlayStrokeColor;
   
   [loginViewController setSignUpController:signupViewController];
   [self presentViewController:loginViewController animated: YES completion: nil];
-  [self updateMapAnnotations];
 }
 
 - (void) startObservingNotifications {
@@ -296,7 +279,8 @@ UIColor *reminderDefaultOverlayStrokeColor;
       Reminder *reminder = (Reminder *)object;
       [self.savedReminders addObject: reminder];
     }
-    [self updateUI]; // findObjectsInBackgroundWithBlock uses main queue for completion handler
+    // TODO: handle error
+    [self updateUI];        // findObjectsInBackgroundWithBlock uses main queue for completion handler
   }];
 }
 
@@ -404,16 +388,23 @@ UIColor *reminderDefaultOverlayStrokeColor;
 - (void)mapView:(MKMapView *)mapView didUpdateUserLocation: (MKUserLocation *)userLocation {
   if (userLocation.location) {
     self.userLocation = userLocation.location;
+    if ([self savedReminders].count == 0) {
+      MKCoordinateRegion region = MKCoordinateRegionMakeWithDistance(self.userLocation.coordinate, ConstNewUserRegionMeters, ConstNewUserRegionMeters);
+      self.mapView.region = region;
+    }
   }
 }
 
 #pragma mark - PFSignUpViewControllerDelegate
 - (void)signUpViewController: (PFSignUpViewController * __nonnull)signUpController didSignUpUser: (PFUser * __nonnull)user {
+  
   [signUpController dismissViewControllerAnimated:YES completion: nil];
 }
 
 #pragma mark - PFLogInViewControllerDelegate
 - (void)logInViewController: (PFLogInViewController * __nonnull)logInController didLogInUser: (PFUser * __nonnull)user {
+  
+  [self updateMapBasedOnLogin];
   [logInController dismissViewControllerAnimated: YES completion: nil];
 }
 

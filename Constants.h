@@ -20,6 +20,7 @@ extern double const ConstReminderCloseRadiusMeters;
 extern double const ConstReminderVeryCloseRadiusMeters;
 extern double const ConstReminderOverlayStrokeLineWidth;
 extern double const ConstReminderOverlayAlpha;
+extern double const ConstNewUserRegionMeters;
 
 extern NSString *const ConstLoginButtonTitle;
 extern NSString *const ConstLogoutButtonTitle;

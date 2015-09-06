@@ -20,10 +20,6 @@
 @property (strong, nonatomic) MKPlacemark *placemark;
 @property (strong, nonatomic) NSString *city;
 
-- (void) updateUI;
-- (void) donePressed;
-- (void) cancelPressed;
-
 @end
 
 #pragma mark -
