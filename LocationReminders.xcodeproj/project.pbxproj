@@ -21,6 +21,8 @@
 		0098C4161B9600A800FC6225 /* Stack.m in Sources */ = {isa = PBXBuildFile; fileRef = 0098C4151B9600A800FC6225 /* Stack.m */; };
 		0098C41A1B960A8500FC6225 /* CodingChallenges.m in Sources */ = {isa = PBXBuildFile; fileRef = 0098C4191B960A8500FC6225 /* CodingChallenges.m */; };
 		0098C41D1B9611D700FC6225 /* Queue.m in Sources */ = {isa = PBXBuildFile; fileRef = 0098C41C1B9611D700FC6225 /* Queue.m */; };
+		00A068C01B9CE4250077ECAC /* Node.m in Sources */ = {isa = PBXBuildFile; fileRef = 00A068BF1B9CE4250077ECAC /* Node.m */; };
+		00A068C31B9CE62C0077ECAC /* NodeLinkedList.m in Sources */ = {isa = PBXBuildFile; fileRef = 00A068C21B9CE62C0077ECAC /* NodeLinkedList.m */; };
 		00CB0D731B977666002F751A /* Bolts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00CB0D6C1B977666002F751A /* Bolts.framework */; };
 		00CB0D741B977666002F751A /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00CB0D6D1B977666002F751A /* Parse.framework */; };
 		00CB0D751B977666002F751A /* ParseCrashReporting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00CB0D6E1B977666002F751A /* ParseCrashReporting.framework */; };
@@ -79,6 +81,10 @@
 		0098C4191B960A8500FC6225 /* CodingChallenges.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodingChallenges.m; sourceTree = "<group>"; };
 		0098C41B1B9611D700FC6225 /* Queue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Queue.h; sourceTree = "<group>"; };
 		0098C41C1B9611D700FC6225 /* Queue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Queue.m; sourceTree = "<group>"; };
+		00A068BE1B9CE4250077ECAC /* Node.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Node.h; sourceTree = "<group>"; };
+		00A068BF1B9CE4250077ECAC /* Node.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Node.m; sourceTree = "<group>"; };
+		00A068C11B9CE62C0077ECAC /* NodeLinkedList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeLinkedList.h; sourceTree = "<group>"; };
+		00A068C21B9CE62C0077ECAC /* NodeLinkedList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NodeLinkedList.m; sourceTree = "<group>"; };
 		00CB0D6C1B977666002F751A /* Bolts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Bolts.framework; sourceTree = "<group>"; };
 		00CB0D6D1B977666002F751A /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Parse.framework; sourceTree = "<group>"; };
 		00CB0D6E1B977666002F751A /* ParseCrashReporting.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ParseCrashReporting.framework; sourceTree = "<group>"; };
@@ -236,6 +242,10 @@
 			children = (
 				0098C4181B960A8500FC6225 /* CodingChallenges.h */,
 				0098C4191B960A8500FC6225 /* CodingChallenges.m */,
+				00A068C11B9CE62C0077ECAC /* NodeLinkedList.h */,
+				00A068C21B9CE62C0077ECAC /* NodeLinkedList.m */,
+				00A068BE1B9CE4250077ECAC /* Node.h */,
+				00A068BF1B9CE4250077ECAC /* Node.m */,
 				0098C4141B9600A800FC6225 /* Stack.h */,
 				0098C4151B9600A800FC6225 /* Stack.m */,
 				0098C41B1B9611D700FC6225 /* Queue.h */,
@@ -394,8 +404,10 @@
 				009285EC1B9928BF00917A3E /* Reminder.m in Sources */,
 				00CB0D901B977B59002F751A /* Keys.m in Sources */,
 				00CB0D931B980AFC002F751A /* AddReminderViewController.m in Sources */,
+				00A068C31B9CE62C0077ECAC /* NodeLinkedList.m in Sources */,
 				0098C4161B9600A800FC6225 /* Stack.m in Sources */,
 				0098C3EC1B95341400FC6225 /* main.m in Sources */,
+				00A068C01B9CE4250077ECAC /* Node.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

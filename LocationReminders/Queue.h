@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface Queue : NSObject
+@interface Queue: NSObject
 
 -(instancetype)init;
 -(NSObject *)dequeue;

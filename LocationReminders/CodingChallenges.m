@@ -9,6 +9,8 @@
 #import "CodingChallenges.h"
 #import "Stack.h"
 #import "Queue.h"
+#import "Node.h"
+#import "NodeLinkedList.h"
 
 @interface CodingChallenges()
 
@@ -125,5 +127,22 @@
   // CODE CHALLENGE: Implement a linked list.
 -(void) thursday {
   
+  NodeLinkedList *list = [[NodeLinkedList alloc] init];
+  [list insertInSortedOrder: [[Node alloc] initWith: @5]];
+  [list insertInSortedOrder: [[Node alloc] initWith: @6]];
+  [list insertInSortedOrder: [[Node alloc] initWith: @3]];
+  [list insertInSortedOrder: [[Node alloc] initWith: @1]];
+  [list insertInSortedOrder: [[Node alloc] initWith: @7]];
+  [list insertInSortedOrder: [[Node alloc] initWith: @2]];
+  [list nslogEmAll];
+  
+  [list removeMatching: @5];
+  [list removeMatching: @5];
+  [list removeMatching: @7];
+  [list removeMatching: @1];
+  [list nslogEmAll];
+  
+  [list removeAll];
+  [list nslogEmAll];
 }
 @end
