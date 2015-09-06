@@ -35,5 +35,5 @@ NSString *const ConstApplicationTitle = @"Location Reminders";
 NSString *const ConstNewAnnotationTitle = @"Add a Reminder?";
 NSString *const ConstInitialNavigationItemTitle = @"Home";
 NSString *const ConstAddReminderNavigationItemTitle = @"Add Reminder";
-NSString *const ConstReminderAlertTitleFormat = @"Reminder: %@";
-NSString *const ConstReminderAlertBodyFormat = @"You are approximately %0.2 kilometers from %@.";
+NSString *const ConstReminderAlertTitleFormat = @"⏰ %@";
+NSString *const ConstReminderAlertBodyFormat = @"You are approximately %0.2f kilometers from %@.";

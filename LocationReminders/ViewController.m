@@ -315,7 +315,7 @@ UIColor *reminderDefaultOverlayStrokeColor;
 - (void) sendLocalNotificationFor: (Reminder *)reminder withDistanceInKilometers: (double)kilometers at: (NSDate *)timestamp {
   UILocalNotification *notification = [[UILocalNotification alloc] init];
   NSString *alertTitle = [[NSString alloc] initWithFormat: ConstReminderAlertTitleFormat, reminder.title];
-  NSString *alertBody = [[NSString alloc] initWithFormat: ConstReminderAlertBodyFormat, kilometers, reminder.placeName];
+  NSString *alertBody = [[NSString alloc] initWithFormat: @"You are approximately %0.2f kilometers from %@.", kilometers, reminder.placeName];
   notification.alertTitle = alertTitle;
   notification.alertBody = alertBody;
   notification.userInfo = [[NSDictionary alloc] initWithObjectsAndKeys: reminder.title, ConstLocalNotificationTitleKey, reminder.placeName, ConstLocalNotificationPlaceKey, @(kilometers), ConstLocalNotificationDistanceKey, timestamp, ConstLocalNotificationDateKey, nil];
@@ -426,10 +426,16 @@ UIColor *reminderDefaultOverlayStrokeColor;
         for (MKCircle *overlay in self.mapView.overlays) {
           if (overlay.coordinate.latitude == reminderCoordinate.latitude && overlay.coordinate.longitude == reminderCoordinate.longitude) {
             [self.mapView removeOverlay: overlay];
+            break;
           }
         }
+        // TODO: a better method for changing overlay back to other colors
+        NSArray *overlays = [self.mapView overlays];
+        [self.mapView removeOverlays: overlays];
+
         MKCircle *overlay = [self overlayCircle: reminderCoordinate];
         [self.mapView addOverlay: overlay];
+        [self.mapView addOverlays: overlays];
       }
       if (distanceMeters < ConstReminderNotifyRadiusMeters) {
         [self trackLocalNotificationFor: reminder withDistanceInKilometers: distanceKilometers];
