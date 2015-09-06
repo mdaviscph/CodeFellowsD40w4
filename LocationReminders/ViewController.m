@@ -23,6 +23,7 @@
 @property (weak, nonatomic) IBOutlet MKMapView *mapView;
 @property (strong, nonatomic) LocationService *locationService;
 @property (strong, nonatomic) NSMutableArray *savedReminders;
+@property (strong, nonatomic) CLLocation* userLocation;
 
 - (void) startObservingNotifications;
 - (void) stopObservingNotifications;
@@ -48,6 +49,10 @@ NSString *const loginButtonTitle = @"Login";
 NSString *const logoutButtonTitle = @"Logout";
 NSString *const newAnnotationTitle = @"Add a Reminder?";
 NSString *const initialNavigationItemTitle = @"Home";
+UIColor *reminderCloseOverlayColor;
+UIColor *reminderVeryCloseOverlayColor;
+UIColor *reminderDefaultOverlayColor;
+UIColor *reminderDefaultOverlayStrokeColor;
 
 #pragma mark - IBActions
 
@@ -76,6 +81,11 @@ NSString *const initialNavigationItemTitle = @"Home";
   return _savedReminders;
 }
 
+- (void) setUserLocation: (CLLocation*)userLocation {
+  _userLocation = userLocation;
+  [self updateUI];
+}
+
 #pragma mark - Lifecycle Methods
 
 - (void) viewDidLoad {
@@ -92,6 +102,11 @@ NSString *const initialNavigationItemTitle = @"Home";
   UIBarButtonItem *loginOutButton = [[UIBarButtonItem alloc] initWithTitle: loginOutTitle style: UIBarButtonItemStylePlain target: self action:@selector(loginOutPressed)];
   self.navigationItem.rightBarButtonItem = loginOutButton;
 
+  reminderCloseOverlayColor = [UIColor blueColor];
+  reminderVeryCloseOverlayColor = [UIColor redColor];
+  reminderDefaultOverlayColor = [UIColor lightGrayColor];
+  reminderDefaultOverlayStrokeColor = [UIColor darkGrayColor];
+  
   // SR520, 40th St.: 47.645997, -122.134871
   // SR520, I-405: 47.632241, -122.187911
   // SR520, Evergreen Pt.: 47.637193, -122.238407
@@ -199,14 +214,11 @@ NSString *const initialNavigationItemTitle = @"Home";
 }
 
 - (void) addMapOverlaysFor: (NSMutableArray *)reminders {
-  NSMutableArray *annotations = [NSMutableArray array];
   for (Reminder *reminder in reminders) {
     CLLocationCoordinate2D coordinate = CLLocationCoordinate2DMake(reminder.center.latitude, reminder.center.longitude);
-    MKCircle *overlay = [MKCircle circleWithCenterCoordinate: coordinate radius: ConstReminderRadiusMeters];
+    MKCircle *overlay = [MKCircle circleWithCenterCoordinate: coordinate radius: ConstReminderVeryCloseRadiusMeters];
     [[self mapView] addOverlay: overlay];
   }
-    //[[self mapView] addAnnotations: annotations];
-  [[self mapView] showAnnotations: annotations animated: YES];
 }
 
 - (void) loginUser {
@@ -261,6 +273,8 @@ NSString *const initialNavigationItemTitle = @"Home";
           MKPointAnnotation* newAnnotation = [self annotationPoint: annotation.coordinate withTitle: reminder.title withSubtitle: reminder.placeName];
           [[self mapView] addAnnotation: newAnnotation];
           [[self mapView] selectAnnotation: newAnnotation animated: YES];
+          MKCircle *overlay = [MKCircle circleWithCenterCoordinate: annotation.coordinate radius: ConstReminderVeryCloseRadiusMeters];
+          [[self mapView] addOverlay: overlay];
         }
       }
     }
@@ -370,15 +384,30 @@ NSString *const initialNavigationItemTitle = @"Home";
 - (MKOverlayRenderer *)mapView:(MKMapView *)mapView rendererForOverlay:(id<MKOverlay>)overlay {
   MKCircleRenderer *renderer = [[MKCircleRenderer alloc] initWithOverlay: overlay];
   
-  renderer.lineWidth = 0.8;
+  CLLocationDistance distance = CLLocationDistanceMax;
+  CLLocation *circleLocation = [[CLLocation alloc] initWithLatitude: [overlay coordinate].latitude longitude: [overlay coordinate].longitude];
+  if (self.userLocation) {
+    distance = [circleLocation distanceFromLocation: self.userLocation];
+  }
+  NSLog(@"pin: %.3f %.3f user: %.3f %.3f distance %.1f", [overlay coordinate].latitude, [overlay coordinate].longitude, self.userLocation.coordinate.latitude, self.userLocation.coordinate.longitude, distance == CLLocationDistanceMax ? -1.0 : distance);
+  if (distance < ConstReminderVeryCloseRadiusMeters) {
+    renderer.fillColor = reminderVeryCloseOverlayColor;
+  } else if (distance < ConstReminderCloseRadiusMeters){
+    renderer.fillColor = reminderCloseOverlayColor;
+  } else {
+    renderer.fillColor = [UIColor lightGrayColor];
+  }
+  
+  renderer.lineWidth = ConstReminderOverlayStrokeLineWidth;
   renderer.strokeColor = [UIColor darkGrayColor];
-  renderer.fillColor = [UIColor lightGrayColor];
-  renderer.alpha = 0.4;
+  renderer.alpha = ConstReminderOverlayAlpha;
   return renderer;
 }
 
 - (void)mapView:(MKMapView *)mapView didUpdateUserLocation: (MKUserLocation *)userLocation {
-  
+  if (userLocation.location) {
+    self.userLocation = userLocation.location;
+  }
 }
 
 #pragma mark - PFSignUpViewControllerDelegate

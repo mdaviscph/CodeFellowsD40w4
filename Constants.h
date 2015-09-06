@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 mike davis. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+@class NSString;
 
 extern NSString *const ConstNotificationOfReminderAdded;
 
@@ -16,4 +16,7 @@ extern NSString *const ConstReminderUserInfoCityKey;
 extern NSString *const ConstReminderUserInfoLatitudeKey;
 extern NSString *const ConstReminderUserInfoLongitudeKey;
 
-extern double const ConstReminderRadiusMeters;
+extern double const ConstReminderCloseRadiusMeters;
+extern double const ConstReminderVeryCloseRadiusMeters;
+extern double const ConstReminderOverlayStrokeLineWidth;
+extern double const ConstReminderOverlayAlpha;

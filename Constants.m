@@ -7,6 +7,7 @@
 //
 
 #import "Constants.h"
+#import <UIKit/UIKit.h>
 
 NSString *const ConstNotificationOfReminderAdded = @"ReminderAddedNotification";
 
@@ -16,4 +17,7 @@ NSString *const ConstReminderUserInfoCityKey = @"placeCity";
 NSString *const ConstReminderUserInfoLatitudeKey = @"placeLatitude";
 NSString *const ConstReminderUserInfoLongitudeKey = @"placeLongitude";
 
-double const ConstReminderRadiusMeters = 100;
+double const ConstReminderCloseRadiusMeters = 1000;
+double const ConstReminderVeryCloseRadiusMeters = 100;
+double const ConstReminderOverlayStrokeLineWidth = 0.8;
+double const ConstReminderOverlayAlpha = 0.4;
