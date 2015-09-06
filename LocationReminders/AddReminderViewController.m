@@ -11,7 +11,7 @@
 #import <CoreLocation/CoreLocation.h>
 
 #pragma mark -
-@interface AddReminderViewController ()
+@interface AddReminderViewController () <UITextFieldDelegate>
 #pragma mark -
 
 @property (weak, nonatomic) IBOutlet UITextField *titleTextField;
@@ -20,6 +20,7 @@
 @property (strong, nonatomic) MKPlacemark *placemark;
 @property (strong, nonatomic) NSString *city;
 
+- (void) updateUI;
 - (void) donePressed;
 - (void) cancelPressed;
 
@@ -39,9 +40,7 @@
 }
 - (void) setAnnotation:(MKPointAnnotation *)annotation {
   _annotation = annotation;
-  if (annotation.title) {
-    self.titleTextField.text = annotation.title;
-  }
+  [self updateUI];
 }
 
 #pragma mark - Private Property Getters, Setters
@@ -52,9 +51,8 @@
 }
 - (void) setPlacemark:(MKPlacemark *)placemark {
   _placemark = placemark;
-  self.addressLabel.text = placemark.name;
   self.city = [placemark.addressDictionary objectForKey:@"City"];
-  self.cityLabel.text = self.city;
+  [self updateUI];
 
 //  for (id key in placemark.addressDictionary) {
 //    id value = placemark.addressDictionary[key];
@@ -66,19 +64,22 @@
 
 - (void)viewDidLoad {
   [super viewDidLoad];
+  [self updateUI];
   
-  self.navigationItem.title = @"Add Reminder";
+  [self titleTextField].delegate = self;
+  
+  self.navigationItem.title = ConstAddReminderNavigationItemTitle;
   UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(donePressed)];
   self.navigationItem.rightBarButtonItem = doneButton;
   UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelPressed)];
   self.navigationItem.leftBarButtonItem = cancelButton;
-
+  
   CLGeocoder *geocoder = [[CLGeocoder alloc] init];
   CLLocation *location = [[CLLocation alloc] initWithLatitude:self.annotation.coordinate.latitude longitude:self.annotation.coordinate.longitude];
-  
   [geocoder reverseGeocodeLocation:location completionHandler: ^(NSArray* placemarks, NSError* error){
      if ([placemarks count] > 0) {
-       self.placemark = [placemarks objectAtIndex:0];
+       self.placemark = [placemarks objectAtIndex: 0];
+       [self updateUI];
      }
    }];
 }
@@ -101,8 +102,8 @@
     [values addObject: self.city];
     [keys addObject: ConstReminderUserInfoCityKey];
   }
-  NSNumber* latitude = [[NSNumber alloc] initWithDouble:self.annotation.coordinate.latitude];
-  NSNumber* longitude = [[NSNumber alloc] initWithDouble:self.annotation.coordinate.longitude];
+  NSNumber* latitude = [[NSNumber alloc] initWithDouble: self.annotation.coordinate.latitude];
+  NSNumber* longitude = [[NSNumber alloc] initWithDouble: self.annotation.coordinate.longitude];
 
   [values addObject: latitude];
   [keys addObject: ConstReminderUserInfoLatitudeKey];
@@ -111,14 +112,32 @@
   
   NSDictionary *userInfo = [[NSDictionary alloc] initWithObjects: values forKeys: keys];
   [[NSNotificationCenter defaultCenter] postNotificationName: ConstNotificationOfReminderAdded object: self userInfo: userInfo];
-  [self.navigationController popViewControllerAnimated:YES];
+  [self.navigationController popViewControllerAnimated: YES];
   return;
 }
 
 - (void) cancelPressed {
-  [self.navigationController popViewControllerAnimated:YES];
+  [self.navigationController popViewControllerAnimated: YES];
   return;
 }
+
+#pragma mark - Helper Methods
+
+-(void) updateUI {
+  if (![[self annotation].title isEqualToString: ConstNewAnnotationTitle]) {
+    self.titleTextField.text = self.annotation.title;
+  }
+  self.addressLabel.text = self.placemark.name;
+  self.cityLabel.text = self.city;
+}
+
+#pragma mark -
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+  [self donePressed];
+  return YES;
+}
+
 @end
 
   // TODO: UITextField delegate or other method so we are done when hitting return

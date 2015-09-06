@@ -45,10 +45,7 @@
 
 NSString *const segueToAddReminder = @"ShowAddReminder";
 NSString *const reusableAnnotationView = @"AnnotationView";
-NSString *const loginButtonTitle = @"Login";
-NSString *const logoutButtonTitle = @"Logout";
-NSString *const newAnnotationTitle = @"Add a Reminder?";
-NSString *const initialNavigationItemTitle = @"Home";
+
 UIColor *reminderCloseOverlayColor;
 UIColor *reminderVeryCloseOverlayColor;
 UIColor *reminderDefaultOverlayColor;
@@ -62,7 +59,7 @@ UIColor *reminderDefaultOverlayStrokeColor;
   NSLog(@"point: (%0.2f, %0.2f)", point.x, point.y);
   NSLog(@"coordinate: (%0.4f, %0.4f)", coordinate.latitude, coordinate.longitude);
   
-  [self.mapView addAnnotation: [self annotationPoint: coordinate withTitle: newAnnotationTitle withSubtitle: nil]];
+  [self.mapView addAnnotation: [self annotationPoint: coordinate withTitle: ConstNewAnnotationTitle withSubtitle: nil]];
 }
 
 #pragma mark - Private Property Getters, Setters
@@ -97,8 +94,8 @@ UIColor *reminderDefaultOverlayStrokeColor;
   [test wednesday];
   [test thursday];
 
-  self.navigationItem.title = initialNavigationItemTitle;
-  NSString *loginOutTitle = [PFUser currentUser] ? logoutButtonTitle : loginButtonTitle;
+  self.navigationItem.title = ConstInitialNavigationItemTitle;
+  NSString *loginOutTitle = [PFUser currentUser] ? ConstLogoutButtonTitle : ConstLoginButtonTitle;
   UIBarButtonItem *loginOutButton = [[UIBarButtonItem alloc] initWithTitle: loginOutTitle style: UIBarButtonItemStylePlain target: self action:@selector(loginOutPressed)];
   self.navigationItem.rightBarButtonItem = loginOutButton;
 
@@ -143,7 +140,7 @@ UIColor *reminderDefaultOverlayStrokeColor;
   
   // if returning from cancelled AddReminder VC remove one (or more if duplicates) related annotations
   for (MKPointAnnotation *annotation in [[self mapView] annotations]) {
-    if ([annotation.title isEqualToString: newAnnotationTitle]) {
+    if ([annotation.title isEqualToString: ConstNewAnnotationTitle]) {
       [[self mapView] removeAnnotation: annotation];
     }
   }
@@ -176,10 +173,10 @@ UIColor *reminderDefaultOverlayStrokeColor;
 
 - (void) updateUI {
   if ([PFUser currentUser]) {
-    self.navigationItem.rightBarButtonItem.title = logoutButtonTitle;
+    self.navigationItem.rightBarButtonItem.title = ConstLogoutButtonTitle;
   }
   else {
-    self.navigationItem.rightBarButtonItem.title = loginButtonTitle;
+    self.navigationItem.rightBarButtonItem.title = ConstLoginButtonTitle;
   }
   [self addMapAnnotationsFor: self.savedReminders];
   [self addMapOverlaysFor: self.savedReminders];
@@ -253,7 +250,7 @@ UIColor *reminderDefaultOverlayStrokeColor;
   NSNumber *longitude = [userInfo objectForKey: ConstReminderUserInfoLongitudeKey];
   NSLog(@"reminder: %@ place: %@ city: %@ latitude: %.3f longitude: %.3f", title, place, city, latitude.doubleValue, longitude.doubleValue);
   
-  if (title && latitude && longitude) {
+  if (title && title.length > 0 && latitude && longitude) {
     Reminder *reminder = [[Reminder alloc] init];
     reminder.title = title;
     reminder.center = [PFGeoPoint geoPointWithLatitude: latitude.doubleValue longitude: longitude.doubleValue];
@@ -266,7 +263,7 @@ UIColor *reminderDefaultOverlayStrokeColor;
     // force change in pin color by causing mapView:viewForAnnimation: to fire by removing and adding annotation
     BOOL addedOnce = NO;
     for (MKPointAnnotation *annotation in [[self mapView] annotations]) {
-      if ([annotation.title isEqualToString: newAnnotationTitle]) {
+      if ([annotation.title isEqualToString: ConstNewAnnotationTitle]) {
         [[self mapView] removeAnnotation: annotation];
         if (!addedOnce) {
           addedOnce = YES;
@@ -353,7 +350,7 @@ UIColor *reminderDefaultOverlayStrokeColor;
     pinView = [[MKPinAnnotationView alloc] initWithAnnotation: annotation reuseIdentifier: reusableAnnotationView];
   }
   
-  if ([annotation.title isEqualToString: newAnnotationTitle]) {
+  if ([annotation.title isEqualToString: ConstNewAnnotationTitle]) {
     pinView.pinColor = MKPinAnnotationColorGreen;
   } else {
     pinView.pinColor = MKPinAnnotationColorRed;
@@ -368,17 +365,17 @@ UIColor *reminderDefaultOverlayStrokeColor;
 
 - (void)mapView:(MKMapView *)mapView didSelectAnnotationView:(MKAnnotationView *)view {
   MKPointAnnotation *pointAnnotation = (MKPointAnnotation *)view.annotation;
-  if ([pointAnnotation.title isEqualToString: newAnnotationTitle]) {
+  if ([pointAnnotation.title isEqualToString: ConstNewAnnotationTitle]) {
     NSLog(@"new annotation view selected");
   }
 }
 
 - (void)mapView:(MKMapView *)mapView annotationView: (MKAnnotationView *)view calloutAccessoryControlTapped: (UIControl *)control {
   MKPointAnnotation *pointAnnotation = (MKPointAnnotation *)view.annotation;
-  if ([pointAnnotation.title isEqualToString: newAnnotationTitle]) {
+  if ([pointAnnotation.title isEqualToString: ConstNewAnnotationTitle]) {
     NSLog(@"new annotation view selected with disclosure button");
   }
-  [self performSegueWithIdentifier:segueToAddReminder sender: self];
+  [self performSegueWithIdentifier: segueToAddReminder sender: self];
 }
 
 - (MKOverlayRenderer *)mapView:(MKMapView *)mapView rendererForOverlay:(id<MKOverlay>)overlay {

@@ -21,3 +21,9 @@ double const ConstReminderCloseRadiusMeters = 1000;
 double const ConstReminderVeryCloseRadiusMeters = 100;
 double const ConstReminderOverlayStrokeLineWidth = 0.8;
 double const ConstReminderOverlayAlpha = 0.4;
+
+NSString *const ConstLoginButtonTitle = @"Login";
+NSString *const ConstLogoutButtonTitle = @"Logout";
+NSString *const ConstNewAnnotationTitle = @"Add a Reminder?";
+NSString *const ConstInitialNavigationItemTitle = @"Home";
+NSString *const ConstAddReminderNavigationItemTitle = @"Add Reminder";
