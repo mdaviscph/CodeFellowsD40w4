@@ -7,24 +7,33 @@
 //
 
 #import "Constants.h"
-#import <UIKit/UIKit.h>
 
+// start - do not localize
 NSString *const ConstNotificationOfReminderAdded = @"ReminderAddedNotification";
-
 NSString *const ConstReminderUserInfoTitleKey = @"reminderTitle";
 NSString *const ConstReminderUserInfoPlaceKey = @"placeName";
 NSString *const ConstReminderUserInfoCityKey = @"placeCity";
 NSString *const ConstReminderUserInfoLatitudeKey = @"placeLatitude";
 NSString *const ConstReminderUserInfoLongitudeKey = @"placeLongitude";
+NSString *const ConstLocalNotificationTitleKey = @"title";
+NSString *const ConstLocalNotificationPlaceKey = @"place";
+NSString *const ConstLocalNotificationDistanceKey = @"kilometers";
+NSString *const ConstLocalNotificationDateKey = @"timestamp";
+// end - do not localize
 
-double const ConstReminderCloseRadiusMeters = 1000;
-double const ConstReminderVeryCloseRadiusMeters = 100;
+double const ConstReminderCloseRadiusMeters = 1500;
+double const ConstReminderOverlayRadiusMeters = 250;
+double const ConstReminderNotifyRadiusMeters = 500;
 double const ConstReminderOverlayStrokeLineWidth = 0.8;
 double const ConstReminderOverlayAlpha = 0.4;
 double const ConstNewUserRegionMeters = 10000;
+double const ConstLocalNotificationPeriodMinutes = 10;
 
 NSString *const ConstLoginButtonTitle = @"Login";
 NSString *const ConstLogoutButtonTitle = @"Logout";
+NSString *const ConstApplicationTitle = @"Location Reminders";
 NSString *const ConstNewAnnotationTitle = @"Add a Reminder?";
 NSString *const ConstInitialNavigationItemTitle = @"Home";
 NSString *const ConstAddReminderNavigationItemTitle = @"Add Reminder";
+NSString *const ConstReminderAlertTitleFormat = @"Reminder: %@";
+NSString *const ConstReminderAlertBodyFormat = @"You are approximately %0.2 kilometers from %@.";

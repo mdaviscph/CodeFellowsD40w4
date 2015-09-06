@@ -26,6 +26,8 @@
 @implementation AddReminderViewController
 #pragma mark -
 
+NSString *const cityPlacemarkKey = @"City";
+
 #pragma mark - Public Property Getters, Setters
 
 // we don't want to update annotation passed to us so we can check title to remove or replace new annotation
@@ -34,7 +36,7 @@
 - (MKPointAnnotation *) annotation {
   return _annotation;
 }
-- (void) setAnnotation:(MKPointAnnotation *)annotation {
+- (void) setAnnotation: (MKPointAnnotation *)annotation {
   _annotation = annotation;
   [self updateUI];
 }
@@ -45,9 +47,9 @@
 - (MKPlacemark *) placemark {
   return _placemark;
 }
-- (void) setPlacemark:(MKPlacemark *)placemark {
+- (void) setPlacemark: (MKPlacemark *)placemark {
   _placemark = placemark;
-  self.city = [placemark.addressDictionary objectForKey:@"City"];
+  self.city = [placemark.addressDictionary objectForKey: cityPlacemarkKey];
   [self updateUI];
 
 //  for (id key in placemark.addressDictionary) {
@@ -62,7 +64,7 @@
   [super viewDidLoad];
   [self updateUI];
   
-  [self titleTextField].delegate = self;
+  self.titleTextField.delegate = self;
   
   self.navigationItem.title = ConstAddReminderNavigationItemTitle;
   UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(donePressed)];
@@ -120,7 +122,7 @@
 #pragma mark - Helper Methods
 
 -(void) updateUI {
-  if (![[self annotation].title isEqualToString: ConstNewAnnotationTitle]) {
+  if (![self.annotation.title isEqualToString: ConstNewAnnotationTitle]) {
     self.titleTextField.text = self.annotation.title;
   }
   self.addressLabel.text = self.placemark.name;

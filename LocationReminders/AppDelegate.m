@@ -22,7 +22,20 @@
   
   [Reminder registerSubclass];
   [Parse setApplicationId: (NSString *)ParseApplicationId clientKey: (NSString *)ParseClientId];
+  
+  if ([application respondsToSelector: @selector(registerUserNotificationSettings:)]) {
+    UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes: (UIUserNotificationTypeAlert | UIUserNotificationTypeBadge) categories: nil];
+    [application registerUserNotificationSettings: settings];
+  }
   return YES;
+}
+
+- (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification {
+  NSDictionary *userInfo = notification.userInfo;
+  for (id key in userInfo) {
+    id value = userInfo[key];
+    NSLog(@"userInfo dictionary: key: %@, value %@", key, value);
+  }
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {
