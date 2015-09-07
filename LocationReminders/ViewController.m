@@ -22,7 +22,8 @@
 
 @property (weak, nonatomic) IBOutlet MKMapView *mapView;
 @property (strong, nonatomic) LocationService *locationService;
-@property (strong, nonatomic) NSMutableArray *savedReminders;
+@property (strong, nonatomic) NSArray *savedReminders;
+@property CLLocationCoordinate2D selectedAnnotationCoordinate;
 @property (strong, nonatomic) NSMutableDictionary *sentNotifications;
 @property (strong, nonatomic) CLLocation* userLocation;
 
@@ -41,15 +42,16 @@ UIColor *reminderVeryCloseOverlayColor;
 UIColor *reminderDefaultOverlayColor;
 UIColor *reminderDefaultOverlayStrokeColor;
 
+double coordinateAccuracy = 0.0000001;
+
 #pragma mark - IBActions
 
 - (IBAction) longPressGesture:(UILongPressGestureRecognizer *)sender {
   CGPoint point = [sender locationInView:self.mapView];
   CLLocationCoordinate2D coordinate = [self.mapView convertPoint: point toCoordinateFromView: self.mapView];
-  NSLog(@"point: (%0.2f, %0.2f)", point.x, point.y);
-  NSLog(@"coordinate: (%0.5f, %0.5f)", coordinate.latitude, coordinate.longitude);
-  
-  [self.mapView addAnnotation: [self annotationPoint: coordinate withTitle: ConstNewAnnotationTitle withSubtitle: nil]];
+  //NSLog(@"point: (%0.2f, %0.2f)", point.x, point.y);
+  //NSLog(@"coordinate: (%0.5f, %0.5f)", coordinate.latitude, coordinate.longitude);
+  [self.mapView addAnnotation: [self annotation: ConstNewAnnotationTitle fromCoordinate: coordinate withSubtitle: nil]];
 }
 
 #pragma mark - Private Property Getters, Setters
@@ -59,13 +61,6 @@ UIColor *reminderDefaultOverlayStrokeColor;
     _locationService = [[LocationService alloc] init];
   }
   return _locationService;
-}
-
-- (NSMutableArray *)savedReminders {
-  if (!_savedReminders) {
-    _savedReminders = [[NSMutableArray alloc] init];
-  }
-  return _savedReminders;
 }
 
 - (NSMutableDictionary *)sentNotifications {
@@ -118,6 +113,7 @@ UIColor *reminderDefaultOverlayStrokeColor;
     [self updateMapBasedOnLogin];
   }
 
+  self.selectedAnnotationCoordinate = CLLocationCoordinate2DMake(0, 0);
   [self startObservingNotifications];
 }
 
@@ -139,10 +135,11 @@ UIColor *reminderDefaultOverlayStrokeColor;
 #pragma mark - Navigation Methods
 
 - (void) prepareForSegue: (UIStoryboardSegue *)segue sender: (id)sender {
-  if ([segue.identifier isEqualToString:segueToAddReminder]) {
+  if ([segue.identifier isEqualToString: segueToAddReminder]) {
     AddReminderViewController *detailVC = segue.destinationViewController;
     MKPointAnnotation *annotation = [[self.mapView selectedAnnotations] firstObject];
     if (annotation) {
+      self.selectedAnnotationCoordinate = annotation.coordinate;
       detailVC.annotation = annotation;
     }
   }
@@ -179,22 +176,30 @@ UIColor *reminderDefaultOverlayStrokeColor;
   else {
     [self.mapView removeAnnotations: self.mapView.annotations];
     [self.mapView removeOverlays: self.mapView.overlays];
-    [self.savedReminders removeAllObjects];
+    self.savedReminders =nil;
     [self updateUI];
   }
 }
 
-- (void) addMapAnnotationsFor: (NSMutableArray *)reminders {
+- (void) addMapAnnotationsFor: (NSArray *)reminders {
+  MKPointAnnotation *selectedAnnotation;
   NSMutableArray *annotations = [[NSMutableArray alloc] init];
   for (Reminder *reminder in reminders) {
-    CLLocationCoordinate2D coordinate = CLLocationCoordinate2DMake(reminder.center.latitude, reminder.center.longitude);
-    [annotations addObject: [self annotationPoint: coordinate withTitle: reminder.title withSubtitle: reminder.placeName]];
+    MKPointAnnotation *annotation = [self annotation: reminder.title fromGeoPoint: reminder.center withSubtitle: reminder.placeName];
+    [annotations addObject: annotation];
+    if ([self isGeoPoint: reminder.center equalTo: self.selectedAnnotationCoordinate]) {
+      selectedAnnotation = annotation;
+    }
   }
   [self.mapView addAnnotations: annotations];
+  if (selectedAnnotation) {
+    self.selectedAnnotationCoordinate = CLLocationCoordinate2DMake(0, 0);
+    [self.mapView selectAnnotation: selectedAnnotation animated: YES];
+  }
   //[self.mapView showAnnotations: annotations animated: YES];
 }
 
-- (MKPointAnnotation *) annotationPoint: (CLLocationCoordinate2D)coordinate withTitle: (NSString *)title withSubtitle: (NSString *)subtitle {
+- (MKPointAnnotation *) annotation: (NSString *)title fromCoordinate: (CLLocationCoordinate2D)coordinate withSubtitle: (NSString *)subtitle {
   MKPointAnnotation *annotation = [[MKPointAnnotation alloc] init];
   annotation.title = title;
   annotation.subtitle = subtitle;
@@ -202,7 +207,15 @@ UIColor *reminderDefaultOverlayStrokeColor;
   return annotation;
 }
 
-- (void) addMapOverlaysFor: (NSMutableArray *)reminders {
+- (MKPointAnnotation *) annotation: (NSString *)title fromGeoPoint: (PFGeoPoint *)geoPoint withSubtitle: (NSString *)subtitle {
+  MKPointAnnotation *annotation = [[MKPointAnnotation alloc] init];
+  annotation.title = title;
+  annotation.subtitle = subtitle;
+  annotation.coordinate = CLLocationCoordinate2DMake(geoPoint.latitude, geoPoint.longitude);
+  return annotation;
+}
+
+- (void) addMapOverlaysFor: (NSArray *)reminders {
   NSMutableArray *overlays = [[NSMutableArray alloc] init];
   for (Reminder *reminder in reminders) {
     CLLocationCoordinate2D coordinate = CLLocationCoordinate2DMake(reminder.center.latitude, reminder.center.longitude);
@@ -253,47 +266,38 @@ UIColor *reminderDefaultOverlayStrokeColor;
     reminder.center = [PFGeoPoint geoPointWithLatitude: latitude.doubleValue longitude: longitude.doubleValue];
     reminder.placeName = place;
     reminder.placeCity = city;
-    [self saveReminder: reminder];    // save new reminder or resave existing one, possibly with new title
     
-    // change the Add a Reminder annotation to look the same as an annotation for a saved reminder
-    // remove any extra annotations due to multiple long presses
-    // force change in pin color by causing mapView:viewForAnnimation: to fire by removing and adding annotation
-    BOOL addedOnce = NO;
-    for (MKPointAnnotation *annotation in [[self mapView] annotations]) {
-      if ([annotation.title isEqualToString: ConstNewAnnotationTitle]) {
-        [self.mapView removeAnnotation: annotation];
-        if (!addedOnce) {
-          addedOnce = YES;
-          MKPointAnnotation* newAnnotation = [self annotationPoint: annotation.coordinate withTitle: reminder.title withSubtitle: reminder.placeName];
-          [self.mapView addAnnotation: newAnnotation];
-          [self.mapView selectAnnotation: newAnnotation animated: YES];
-          [self.mapView addOverlay: [self overlayCircle: annotation.coordinate]];
-        }
+    CLLocationCoordinate2D newReminderCoordinate = CLLocationCoordinate2DMake(reminder.center.latitude, reminder.center.longitude);
+    for (Reminder *oldReminder in self.savedReminders) {
+      CLLocationCoordinate2D oldReminderCoordinate = CLLocationCoordinate2DMake(oldReminder.center.latitude, oldReminder.center.longitude);
+      if ([self isCoordinate: oldReminderCoordinate equalTo: newReminderCoordinate]) {
+        [oldReminder deleteInBackground];
       }
     }
+    [self saveReminder: reminder];
   }
 }
 
 - (void) saveReminder:(Reminder *)reminder {
-  if (![PFUser currentUser]) {
-    [self loginUser];
-  }
   if ([PFUser currentUser]) {
     reminder.user = [PFUser currentUser];
-    [self.savedReminders addObject: reminder];
     [reminder saveInBackground];
+    // savedReminders is only mutated by results from query (actually replaced)
+    [self queryRemindersFor: [PFUser currentUser]];
   }
 }
 
-- (void) queryRemindersFor:(PFUser *)user {
+- (void) queryRemindersFor: (PFUser *)user {
+  NSMutableArray* reminders = [[NSMutableArray alloc] init];
   PFQuery *remindersQuery = [Reminder query];
   [remindersQuery whereKey: userKey equalTo: [PFUser currentUser]];
   [remindersQuery findObjectsInBackgroundWithBlock: ^(NSArray *objects, NSError *error) {
     for (id object in objects) {
       Reminder *reminder = (Reminder *)object;
-      [self.savedReminders addObject: reminder];
+      [reminders addObject: reminder];
     }
     // TODO: handle error
+    self.savedReminders = reminders;
     [self updateUI];        // findObjectsInBackgroundWithBlock uses main queue for completion handler
   }];
 }
@@ -321,6 +325,14 @@ UIColor *reminderDefaultOverlayStrokeColor;
   notification.userInfo = [[NSDictionary alloc] initWithObjectsAndKeys: reminder.title, ConstLocalNotificationTitleKey, reminder.placeName, ConstLocalNotificationPlaceKey, @(kilometers), ConstLocalNotificationDistanceKey, timestamp, ConstLocalNotificationDateKey, nil];
   [[UIApplication sharedApplication] presentLocalNotificationNow: notification];
   NSLog(@"local notification for reminder: %@ distance: %0.3f timestamp: %@", reminder.title, kilometers, timestamp);
+}
+
+- (BOOL) isCoordinate: (CLLocationCoordinate2D)coordinate1 equalTo: (CLLocationCoordinate2D)coordinate2 {
+  return fabs(coordinate1.latitude - coordinate2.latitude) < coordinateAccuracy && fabs(coordinate1.longitude - coordinate2.longitude) < coordinateAccuracy;
+}
+
+- (BOOL) isGeoPoint: (PFGeoPoint *)geoPoint equalTo: (CLLocationCoordinate2D)coordinate {
+  return fabs(geoPoint.latitude - coordinate.latitude) < coordinateAccuracy && fabs(geoPoint.longitude - coordinate.longitude) < coordinateAccuracy;
 }
 
 #pragma mark -
@@ -424,7 +436,7 @@ UIColor *reminderDefaultOverlayStrokeColor;
       CLLocationCoordinate2D reminderCoordinate = CLLocationCoordinate2DMake(reminder.center.latitude, reminder.center.longitude);
       if (distanceMeters < ConstReminderCloseRadiusMeters) {
         for (MKCircle *overlay in self.mapView.overlays) {
-          if (overlay.coordinate.latitude == reminderCoordinate.latitude && overlay.coordinate.longitude == reminderCoordinate.longitude) {
+          if ([self isCoordinate: overlay.coordinate equalTo: reminderCoordinate]) {
             [self.mapView removeOverlay: overlay];
             break;
           }
@@ -436,6 +448,7 @@ UIColor *reminderDefaultOverlayStrokeColor;
         MKCircle *overlay = [self overlayCircle: reminderCoordinate];
         [self.mapView addOverlay: overlay];
         [self.mapView addOverlays: overlays];
+        NSLog(@"overlay count: %lu", (unsigned long)overlays.count);
       }
       if (distanceMeters < ConstReminderNotifyRadiusMeters) {
         [self trackLocalNotificationFor: reminder withDistanceInKilometers: distanceKilometers];

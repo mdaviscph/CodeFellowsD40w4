@@ -31,7 +31,6 @@ NSString *const cityPlacemarkKey = @"City";
 #pragma mark - Public Property Getters, Setters
 
 // we don't want to update annotation passed to us so we can check title to remove or replace new annotation
-// TODO: figure out how to have a "copy" property when you replace the setter 
 @synthesize annotation = _annotation;
 - (MKPointAnnotation *) annotation {
   return _annotation;
@@ -89,6 +88,9 @@ NSString *const cityPlacemarkKey = @"City";
   NSMutableArray *values = [[NSMutableArray alloc] init];
   NSMutableArray *keys = [[NSMutableArray alloc] init];
   if (self.titleTextField.text) {
+    if (![self.annotation.title isEqualToString: ConstNewAnnotationTitle]) {
+      self.annotation.title = self.titleTextField.text;
+    }
     [values addObject: self.titleTextField.text];
     [keys addObject: ConstReminderUserInfoTitleKey];
   }

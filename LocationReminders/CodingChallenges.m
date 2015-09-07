@@ -127,22 +127,22 @@
   // CODE CHALLENGE: Implement a linked list.
 -(void) thursday {
   
-  NodeLinkedList *list = [[NodeLinkedList alloc] init];
-  [list insertInSortedOrder: [[Node alloc] initWith: @5]];
-  [list insertInSortedOrder: [[Node alloc] initWith: @6]];
-  [list insertInSortedOrder: [[Node alloc] initWith: @3]];
-  [list insertInSortedOrder: [[Node alloc] initWith: @1]];
-  [list insertInSortedOrder: [[Node alloc] initWith: @7]];
-  [list insertInSortedOrder: [[Node alloc] initWith: @2]];
-  [list nslogEmAll];
+  NodeLinkedList *sortedList = [[NodeLinkedList alloc] init];
+  [sortedList insertInSortedOrder: [[Node alloc] initWith: @5]];
+  [sortedList insertInSortedOrder: [[Node alloc] initWith: @6]];
+  [sortedList insertInSortedOrder: [[Node alloc] initWith: @3]];
+  [sortedList insertInSortedOrder: [[Node alloc] initWith: @1]];
+  [sortedList insertInSortedOrder: [[Node alloc] initWith: @7]];
+  [sortedList insertInSortedOrder: [[Node alloc] initWith: @2]];
+  [sortedList nslogEmAll];
   
-  [list removeMatching: @5];
-  [list removeMatching: @5];
-  [list removeMatching: @7];
-  [list removeMatching: @1];
-  [list nslogEmAll];
+  [sortedList removeMatching: @5];
+  [sortedList removeMatching: @5];
+  [sortedList removeMatching: @7];
+  [sortedList removeMatching: @1];
+  [sortedList nslogEmAll];
   
-  [list removeAll];
-  [list nslogEmAll];
+  [sortedList removeAll];
+  [sortedList nslogEmAll];
 }
 @end
