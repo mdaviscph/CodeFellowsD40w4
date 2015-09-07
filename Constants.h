@@ -20,7 +20,6 @@ extern NSString *const ConstLocalNotificationPlaceKey;
 extern NSString *const ConstLocalNotificationDistanceKey;
 extern NSString *const ConstLocalNotificationDateKey;
 
-
 extern double const ConstReminderCloseRadiusMeters;
 extern double const ConstReminderOverlayRadiusMeters;
 extern double const ConstReminderNotifyRadiusMeters;
@@ -28,6 +27,7 @@ extern double const ConstReminderOverlayStrokeLineWidth;
 extern double const ConstReminderOverlayAlpha;
 extern double const ConstNewUserRegionMeters;
 extern double const ConstLocalNotificationPeriodMinutes;
+extern double const ConstCoordinateAccuracy;
 
 extern NSString *const ConstLoginButtonTitle;
 extern NSString *const ConstLogoutButtonTitle;

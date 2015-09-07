@@ -28,6 +28,7 @@ double const ConstReminderOverlayStrokeLineWidth = 0.8;
 double const ConstReminderOverlayAlpha = 0.4;
 double const ConstNewUserRegionMeters = 10000;
 double const ConstLocalNotificationPeriodMinutes = 10;
+double const ConstCoordinateAccuracy = 0.0001;          // approx. 11 meters
 
 NSString *const ConstLoginButtonTitle = @"Login";
 NSString *const ConstLogoutButtonTitle = @"Logout";

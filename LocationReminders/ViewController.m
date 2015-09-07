@@ -42,8 +42,6 @@ UIColor *reminderVeryCloseOverlayColor;
 UIColor *reminderDefaultOverlayColor;
 UIColor *reminderDefaultOverlayStrokeColor;
 
-double coordinateAccuracy = 0.0000001;
-
 #pragma mark - IBActions
 
 - (IBAction) longPressGesture:(UILongPressGestureRecognizer *)sender {
@@ -91,9 +89,11 @@ double coordinateAccuracy = 0.0000001;
 
   self.navigationItem.title = ConstInitialNavigationItemTitle;
   NSString *loginOutTitle = [PFUser currentUser] ? ConstLogoutButtonTitle : ConstLoginButtonTitle;
-  UIBarButtonItem *loginOutButton = [[UIBarButtonItem alloc] initWithTitle: loginOutTitle style: UIBarButtonItemStylePlain target: self action:@selector(loginOutPressed)];
+  UIBarButtonItem *loginOutButton = [[UIBarButtonItem alloc] initWithTitle: loginOutTitle style: UIBarButtonItemStylePlain target: self action: @selector(loginOutPressed)];
   self.navigationItem.rightBarButtonItem = loginOutButton;
-
+  UIBarButtonItem *pauseResumeButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem: UIBarButtonSystemItemPause target: self action: @selector(pauseResumePressed)];
+  self.navigationItem.leftBarButtonItem = pauseResumeButton;
+  
   reminderCloseOverlayColor = [UIColor blueColor];
   reminderVeryCloseOverlayColor = [UIColor redColor];
   reminderDefaultOverlayColor = [UIColor lightGrayColor];
@@ -120,7 +120,7 @@ double coordinateAccuracy = 0.0000001;
 - (void) viewWillAppear:(BOOL)animated {
   [super viewWillAppear:animated];
   
-  BOOL available = [self.locationService isMonitoringAvailable:ServicesEnabled];
+  BOOL available = [self.locationService isMonitoringAvailable: ServicesEnabled];
   self.mapView.showsUserLocation = available ? YES : NO;
   self.mapView.delegate = available ? self : nil;
   
@@ -154,6 +154,17 @@ double coordinateAccuracy = 0.0000001;
     [PFUser logOut];
     [self updateMapBasedOnLogin];
   }
+}
+
+- (void) pauseResumePressed {
+  UIBarButtonItem *pauseResumeButton;
+  if (self.mapView.showsUserLocation) {
+    pauseResumeButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem: UIBarButtonSystemItemPlay target: self action: @selector(pauseResumePressed)];
+  } else {
+    pauseResumeButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem: UIBarButtonSystemItemPause target: self action: @selector(pauseResumePressed)];
+  }
+  self.navigationItem.leftBarButtonItem = pauseResumeButton;
+  self.mapView.showsUserLocation = !self.mapView.showsUserLocation;
 }
 
 #pragma mark - Helper Methods
@@ -328,11 +339,11 @@ double coordinateAccuracy = 0.0000001;
 }
 
 - (BOOL) isCoordinate: (CLLocationCoordinate2D)coordinate1 equalTo: (CLLocationCoordinate2D)coordinate2 {
-  return fabs(coordinate1.latitude - coordinate2.latitude) < coordinateAccuracy && fabs(coordinate1.longitude - coordinate2.longitude) < coordinateAccuracy;
+  return fabs(coordinate1.latitude - coordinate2.latitude) < ConstCoordinateAccuracy && fabs(coordinate1.longitude - coordinate2.longitude) < ConstCoordinateAccuracy;
 }
 
 - (BOOL) isGeoPoint: (PFGeoPoint *)geoPoint equalTo: (CLLocationCoordinate2D)coordinate {
-  return fabs(geoPoint.latitude - coordinate.latitude) < coordinateAccuracy && fabs(geoPoint.longitude - coordinate.longitude) < coordinateAccuracy;
+  return fabs(geoPoint.latitude - coordinate.latitude) < ConstCoordinateAccuracy && fabs(geoPoint.longitude - coordinate.longitude) < ConstCoordinateAccuracy;
 }
 
 #pragma mark -
@@ -356,10 +367,13 @@ double coordinateAccuracy = 0.0000001;
         //TODO: Alert popover
       break;
     case kCLAuthorizationStatusAuthorizedWhenInUse:
+      if ([self.locationService isMonitoringAvailable: ServicesEnabled]) {
+        self.mapView.showsUserLocation = YES;
+        self.mapView.delegate = self;
         // we don't currently need this because the mapView handles location updates
         // we will eventually start region monitoring here
         //[self.locationService.manager startUpdatingLocation];
-      break;
+      }
     case kCLAuthorizationStatusNotDetermined:
         // should not be changing back to this so we can ignore
       break;
@@ -433,22 +447,21 @@ double coordinateAccuracy = 0.0000001;
     for (Reminder *reminder in self.savedReminders) {
       double distanceKilometers = [userGeoPoint distanceInKilometersTo:reminder.center];
       double distanceMeters = distanceKilometers * 1000;
-      CLLocationCoordinate2D reminderCoordinate = CLLocationCoordinate2DMake(reminder.center.latitude, reminder.center.longitude);
       if (distanceMeters < ConstReminderCloseRadiusMeters) {
-        for (MKCircle *overlay in self.mapView.overlays) {
-          if ([self isCoordinate: overlay.coordinate equalTo: reminderCoordinate]) {
-            [self.mapView removeOverlay: overlay];
-            break;
-          }
-        }
-        // TODO: a better method for changing overlay back to other colors
+//        CLLocationCoordinate2D reminderCoordinate = CLLocationCoordinate2DMake(reminder.center.latitude, reminder.center.longitude);
+//        for (MKCircle *overlay in self.mapView.overlays) {
+//          if ([self isCoordinate: overlay.coordinate equalTo: reminderCoordinate]) {
+//            [self.mapView removeOverlay: overlay];
+//            MKCircle *overlay = [self overlayCircle: reminderCoordinate];
+//            [self.mapView addOverlay: overlay];
+//            break;
+//          }
+//        }
+        // TODO: a better method for changing overlay back to other colors; with the method of removing
+        // and adding overlays we don't currently need to remove and add single overlay for this reminder
         NSArray *overlays = [self.mapView overlays];
         [self.mapView removeOverlays: overlays];
-
-        MKCircle *overlay = [self overlayCircle: reminderCoordinate];
-        [self.mapView addOverlay: overlay];
         [self.mapView addOverlays: overlays];
-        NSLog(@"overlay count: %lu", (unsigned long)overlays.count);
       }
       if (distanceMeters < ConstReminderNotifyRadiusMeters) {
         [self trackLocalNotificationFor: reminder withDistanceInKilometers: distanceKilometers];
