@@ -131,7 +131,7 @@ NSString *const cityPlacemarkKey = @"City";
   self.cityLabel.text = self.city;
 }
 
-#pragma mark -
+#pragma mark - UITextFieldDelegate
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
   [self donePressed];
@@ -139,5 +139,3 @@ NSString *const cityPlacemarkKey = @"City";
 }
 
 @end
-
-  // TODO: UITextField delegate or other method so we are done when hitting return

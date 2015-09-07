@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		00738BA41B9E0336007D3B08 /* AlertOnError.m in Sources */ = {isa = PBXBuildFile; fileRef = 00738BA31B9E0336007D3B08 /* AlertOnError.m */; };
 		009285E41B98BF0200917A3E /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 009285E31B98BF0200917A3E /* Constants.m */; };
 		009285EC1B9928BF00917A3E /* Reminder.m in Sources */ = {isa = PBXBuildFile; fileRef = 009285EB1B9928BF00917A3E /* Reminder.m */; };
 		0098C3EC1B95341400FC6225 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0098C3EB1B95341400FC6225 /* main.m */; };
@@ -55,6 +56,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		00738BA21B9E0336007D3B08 /* AlertOnError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AlertOnError.h; path = LocationReminders/AlertOnError.h; sourceTree = "<group>"; };
+		00738BA31B9E0336007D3B08 /* AlertOnError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AlertOnError.m; path = LocationReminders/AlertOnError.m; sourceTree = "<group>"; };
 		009285E21B98BF0200917A3E /* Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Constants.h; path = ../Constants.h; sourceTree = "<group>"; };
 		009285E31B98BF0200917A3E /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Constants.m; path = ../Constants.m; sourceTree = "<group>"; };
 		009285EA1B9928BF00917A3E /* Reminder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reminder.h; sourceTree = "<group>"; };
@@ -147,6 +150,8 @@
 		009285E51B99284500917A3E /* View */ = {
 			isa = PBXGroup;
 			children = (
+				00738BA21B9E0336007D3B08 /* AlertOnError.h */,
+				00738BA31B9E0336007D3B08 /* AlertOnError.m */,
 			);
 			name = View;
 			path = ..;
@@ -403,6 +408,7 @@
 				009285E41B98BF0200917A3E /* Constants.m in Sources */,
 				009285EC1B9928BF00917A3E /* Reminder.m in Sources */,
 				00CB0D901B977B59002F751A /* Keys.m in Sources */,
+				00738BA41B9E0336007D3B08 /* AlertOnError.m in Sources */,
 				00CB0D931B980AFC002F751A /* AddReminderViewController.m in Sources */,
 				00A068C31B9CE62C0077ECAC /* NodeLinkedList.m in Sources */,
 				0098C4161B9600A800FC6225 /* Stack.m in Sources */,

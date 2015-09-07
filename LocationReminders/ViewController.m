@@ -11,6 +11,7 @@
 #import "Reminder.h"
 #import "Constants.h"
 #import "LocationService.h"
+#import "AlertOnError.h"
 #import <MapKit/MapKit.h>
 #import <Parse/Parse.h>
 #import <ParseUI/ParseUI.h>
@@ -364,7 +365,7 @@ UIColor *reminderDefaultOverlayStrokeColor;
         // not currently asking for this so we can ignore this case
       break;
     case kCLAuthorizationStatusDenied:
-        //TODO: Alert popover
+      [AlertOnError alertPopover: kErrorLocationServicesDenied withDescription: kEnableLocationServices controller: self completion: nil];
       break;
     case kCLAuthorizationStatusAuthorizedWhenInUse:
       if ([self.locationService isMonitoringAvailable: ServicesEnabled]) {
@@ -374,13 +375,12 @@ UIColor *reminderDefaultOverlayStrokeColor;
         // we will eventually start region monitoring here
         //[self.locationService.manager startUpdatingLocation];
       }
+      break;
     case kCLAuthorizationStatusNotDetermined:
         // should not be changing back to this so we can ignore
       break;
     case kCLAuthorizationStatusRestricted:
-        //TODO: Alert popover
-      break;
-    default:
+      [AlertOnError alertPopover: kErrorLocationServicesDenied withDescription: kEnableLocationServices controller: self completion: nil];
       break;
   }
 }

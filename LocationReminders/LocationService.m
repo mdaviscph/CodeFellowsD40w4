@@ -53,6 +53,7 @@
       break;
     case Region:
       available = [CLLocationManager isMonitoringAvailableForClass:[CLBeaconRegion class]];
+      break;
     default:
       break;
   }
