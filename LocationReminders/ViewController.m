@@ -11,7 +11,7 @@
 #import "Reminder.h"
 #import "Constants.h"
 #import "LocationService.h"
-#import "AlertOnError.h"
+#import "AlertPopover.h"
 #import <MapKit/MapKit.h>
 #import <Parse/Parse.h>
 #import <ParseUI/ParseUI.h>
@@ -308,7 +308,9 @@ UIColor *reminderDefaultOverlayStrokeColor;
       Reminder *reminder = (Reminder *)object;
       [reminders addObject: reminder];
     }
-    // TODO: handle error
+    if (error) {
+      [AlertPopover alert: kErrorParseFramework withNSError: error controller: self completion: nil];
+    }
     self.savedReminders = reminders;
     [self updateUI];        // findObjectsInBackgroundWithBlock uses main queue for completion handler
   }];
@@ -331,7 +333,7 @@ UIColor *reminderDefaultOverlayStrokeColor;
 - (void) sendLocalNotificationFor: (Reminder *)reminder withDistanceInKilometers: (double)kilometers at: (NSDate *)timestamp {
   UILocalNotification *notification = [[UILocalNotification alloc] init];
   NSString *alertTitle = [[NSString alloc] initWithFormat: ConstReminderAlertTitleFormat, reminder.title];
-  NSString *alertBody = [[NSString alloc] initWithFormat: @"You are approximately %0.2f kilometers from %@.", kilometers, reminder.placeName];
+  NSString *alertBody = [[NSString alloc] initWithFormat: ConstReminderAlertBodyFormat, kilometers, reminder.placeName];
   notification.alertTitle = alertTitle;
   notification.alertBody = alertBody;
   notification.userInfo = [[NSDictionary alloc] initWithObjectsAndKeys: reminder.title, ConstLocalNotificationTitleKey, reminder.placeName, ConstLocalNotificationPlaceKey, @(kilometers), ConstLocalNotificationDistanceKey, timestamp, ConstLocalNotificationDateKey, nil];
@@ -365,7 +367,7 @@ UIColor *reminderDefaultOverlayStrokeColor;
         // not currently asking for this so we can ignore this case
       break;
     case kCLAuthorizationStatusDenied:
-      [AlertOnError alertPopover: kErrorLocationServicesDenied withDescription: kEnableLocationServices controller: self completion: nil];
+      [AlertPopover alert: kErrorLocationServicesDenied withDescription: kEnableLocationServices controller: self completion: nil];
       break;
     case kCLAuthorizationStatusAuthorizedWhenInUse:
       if ([self.locationService isMonitoringAvailable: ServicesEnabled]) {
@@ -380,7 +382,7 @@ UIColor *reminderDefaultOverlayStrokeColor;
         // should not be changing back to this so we can ignore
       break;
     case kCLAuthorizationStatusRestricted:
-      [AlertOnError alertPopover: kErrorLocationServicesDenied withDescription: kEnableLocationServices controller: self completion: nil];
+      [AlertPopover alert: kErrorLocationServicesDenied withDescription: kEnableLocationServices controller: self completion: nil];
       break;
   }
 }

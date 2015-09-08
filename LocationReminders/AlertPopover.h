@@ -1,5 +1,5 @@
 //
-//  AlertOnError.h
+//  AlertPopover.h
 //  LocationReminders
 //
 //  Created by mike davis on 9/7/15.
@@ -20,13 +20,14 @@ extern NSString *const kErrorLocationServicesDenied;
 extern NSString *const kErrorLocationServicesRestricted;
 extern NSString *const kEnableLocationServices;
 extern NSString *const kErrorMapKit;
+extern NSString *const kErrorParseFramework;
 
 extern NSString *const kActionOk;
 
-@interface AlertOnError : NSObject
+@interface AlertPopover : NSObject
 
-+ (void) alertPopover: (NSString *)title withNSError: (NSError *)error controller: (UIViewController *)parent completion: (void(^)(void)) handler;
-+ (void) alertPopover: (NSString *)title withStatusCode: (NSInteger)statusCode controller: (UIViewController *)parent completion: (void(^)(void)) handler;
-+ (void) alertPopover: (NSString *)title withDescription: (NSString *)message controller: (UIViewController *)parent completion: (void(^)(void)) handler;
++ (void) alert: (NSString *)title withNSError: (NSError *)error controller: (UIViewController *)parent completion: (void(^)(void)) handler;
++ (void) alert: (NSString *)title withStatusCode: (NSInteger)statusCode controller: (UIViewController *)parent completion: (void(^)(void)) handler;
++ (void) alert: (NSString *)title withDescription: (NSString *)message controller: (UIViewController *)parent completion: (void(^)(void)) handler;
 
 @end

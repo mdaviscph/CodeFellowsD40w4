@@ -8,6 +8,8 @@
 
 #import "AppDelegate.h"
 #import "Reminder.h"
+#import "AlertPopover.h"
+#import "Constants.h"
 #import "Keys.h"
 #import <Parse/Parse.h>
 
@@ -31,10 +33,16 @@
 }
 
 - (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification {
-  NSDictionary *userInfo = notification.userInfo;
-  for (id key in userInfo) {
-    id value = userInfo[key];
-    NSLog(@"userInfo dictionary: key: %@, value %@", key, value);
+  
+  if (application.applicationState == UIApplicationStateActive && notification) {
+    NSDictionary *userInfo = notification.userInfo;
+    NSString *title = [userInfo objectForKey: ConstLocalNotificationTitleKey];
+    NSString *place = [userInfo objectForKey: ConstLocalNotificationPlaceKey];
+    NSNumber *distance = [userInfo objectForKey: ConstLocalNotificationDistanceKey];
+    NSString *alertTitle = [[NSString alloc] initWithFormat: ConstReminderAlertTitleFormat, title];
+    NSString *alertBody = [[NSString alloc] initWithFormat: @"You are approximately %0.2f kilometers from %@.", distance.doubleValue, place];
+    UIViewController *rootVC = self.window.rootViewController;
+    [AlertPopover alert: alertTitle withDescription: alertBody controller: rootVC completion: nil];
   }
 }
 

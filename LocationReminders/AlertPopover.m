@@ -1,12 +1,12 @@
 //
-//  AlertOnError.m
+//  AlertPopover.m
 //  LocationReminders
 //
 //  Created by mike davis on 9/7/15.
 //  Copyright (c) 2015 mike davis. All rights reserved.
 //
 
-#import "AlertOnError.h"
+#import "AlertPopover.h"
 #import <UIKit/UIKit.h>
 
 NSString *const kErrorNotSignedIn = @"Please sign in and try again.";
@@ -20,30 +20,33 @@ NSString *const kErrorLocationServicesDenied = @"Location Services - Authorizati
 NSString *const kErrorLocationServicesRestricted = @"Location Services - Authorization Restricted.";
 NSString *const kEnableLocationServices = @"Please enable Location Services - Allow Access: [While Using the App]";
 NSString *const kErrorMapKit = @"Mapping Service";
+NSString *const kErrorParseFramework = @"Parse Framework Error";
 
 NSString *const kActionOk = @"Ok";
 
-@interface AlertOnError ()
+@interface AlertPopover ()
 @end
 
-@implementation AlertOnError
+@implementation AlertPopover
 
 NSString *const kStatusCodeErrorFormat = @"%@ (%ld)";
 
-+ (void) alertPopover: (NSString *)title withNSError: (NSError *)error controller: (UIViewController *)parent completion: (void(^)(void)) handler {
++ (void) alert: (NSString *)title withNSError: (NSError *)error controller: (UIViewController *)parent completion: (void(^)(void)) handler {
   NSString *message = error.localizedDescription;
   UIAlertController *alert = [UIAlertController alertControllerWithTitle: title message: message preferredStyle: UIAlertControllerStyleAlert];
   alert.modalPresentationStyle = UIModalPresentationPopover;
   alert.popoverPresentationController.sourceView = parent.view;
   alert.popoverPresentationController.sourceRect = parent.view.frame;
   UIAlertAction *okAction = [UIAlertAction actionWithTitle: kActionOk style: UIAlertActionStyleDefault handler: ^(UIAlertAction *action) {
-    handler();
+    if (handler) {
+      handler();
+    }
   }];
   [alert addAction: okAction];
   [parent presentViewController: alert animated: YES completion: nil];
 }
 
-+ (void) alertPopover: (NSString *)title withStatusCode: (NSInteger)statusCode controller: (UIViewController *)parent completion: (void(^)(void)) handler {
++ (void) alert: (NSString *)title withStatusCode: (NSInteger)statusCode controller: (UIViewController *)parent completion: (void(^)(void)) handler {
   NSString *message;
   if (statusCode >= 200 && statusCode < 300) {
     message = [NSString stringWithFormat: kStatusCodeErrorFormat, kErrorBadData, (long)statusCode];
@@ -62,19 +65,23 @@ NSString *const kStatusCodeErrorFormat = @"%@ (%ld)";
   alert.popoverPresentationController.sourceView = parent.view;
   alert.popoverPresentationController.sourceRect = parent.view.frame;
   UIAlertAction *okAction = [UIAlertAction actionWithTitle: kActionOk style: UIAlertActionStyleDefault handler: ^(UIAlertAction *action) {
-    handler();
+    if (handler) {
+      handler();
+    }
   }];
   [alert addAction: okAction];
   [parent presentViewController: alert animated: YES completion: nil];
 }
 
-+ (void) alertPopover: (NSString *)title withDescription: (NSString *)message controller: (UIViewController *)parent completion: (void(^)(void)) handler {
++ (void) alert: (NSString *)title withDescription: (NSString *)message controller: (UIViewController *)parent completion: (void(^)(void)) handler {
   UIAlertController *alert = [UIAlertController alertControllerWithTitle: title message: message preferredStyle: UIAlertControllerStyleAlert];
   alert.modalPresentationStyle = UIModalPresentationPopover;
   alert.popoverPresentationController.sourceView = parent.view;
   alert.popoverPresentationController.sourceRect = parent.view.frame;
   UIAlertAction *okAction = [UIAlertAction actionWithTitle: kActionOk style: UIAlertActionStyleDefault handler: ^(UIAlertAction *action) {
-    handler();
+    if (handler) {
+      handler();
+    }
   }];
   [alert addAction: okAction];
   [parent presentViewController: alert animated: YES completion: nil];
